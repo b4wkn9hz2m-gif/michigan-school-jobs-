@@ -5,10 +5,18 @@ on:
   schedule:
     - cron: "47 11 * * *" # ~7:47am Eastern, after the morning update
   workflow_dispatch:
+    inputs:
+      wait_seconds:
+        description: "Wait before checking (e.g. right after a deploy)"
+        required: false
+        default: "0"
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - name: Wait for deploy
+        if: ${{ github.event.inputs.wait_seconds != '' && github.event.inputs.wait_seconds != '0' }}
+        run: sleep ${{ github.event.inputs.wait_seconds }}
       - name: Check pages
         run: |
           fail=0
@@ -17,6 +25,10 @@ jobs:
             code=${out%% *}
             if [ "$code" = "200" ] && grep -qi "$2" page.html; then echo "OK    $code  $1"; else echo "FAIL  $out  $1 (looking for: $2)"; grep -iE "^(server|cf-mitigated|cf-ray|content-type):" headers.txt | tr -d '\r' | sed 's/^/        /'; head -c 300 page.html | tr '\n' ' ' | sed 's/^/        body: /'; echo; fail=1; fi
           }
+          echo "--- backup address:"
+          check "https://michigan-school-jobs.shloimysicker.workers.dev/" "Michigan School" || true
+          check "https://michigan-school-jobs.shloimysicker.workers.dev/jobs/" "Positions" || true
+          echo "--- main domain:"
           for host in https://michigan-school-jobs.com https://www.michigan-school-jobs.com; do
             check "$host/" "Michigan School"
             check "$host/jobs/" "Positions"
@@ -27,6 +39,4 @@ jobs:
           job=$(grep -o 'https://michigan-school-jobs.com/jobs/[^<]*' page.html | head -1 || true)
           curl -sS -m 30 https://michigan-school-jobs.com/sitemap.xml | grep -o 'https://michigan-school-jobs.com/jobs/[^<]*' | head -1 > joburl.txt || true
           if [ -s joburl.txt ]; then check "$(cat joburl.txt)" "Apply for Job"; fi
-          echo "--- backup address (should stop working once it's turned off):"
-          curl -sS -o /dev/null -m 30 -w "%{http_code}\n" https://michigan-school-jobs.shloimysicker.workers.dev/ || true
           exit $fail
