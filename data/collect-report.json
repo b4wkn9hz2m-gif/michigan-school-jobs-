@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T22:51:34.380Z",
- "total": 2947,
+ "ranAt": "2026-11-01T23:47:46.499Z",
+ "total": 2946,
  "sources": [
   {
    "id": "oakland-schools",
@@ -10,7 +10,7 @@
   {
    "id": "wayne-resa",
    "ok": true,
-   "count": 701
+   "count": 700
   },
   {
    "id": "washtenaw-isd",
@@ -209,7 +209,7 @@
   }
  ],
  "linkCheck": {
-  "checked": 87,
+  "checked": 0,
   "failures": 0,
   "outage": false,
   "removed": 0,
