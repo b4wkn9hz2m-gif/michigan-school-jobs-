@@ -9,6 +9,7 @@ const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} | Michigan s
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const seekers = [
   { href: "/jobs", label: "Find Jobs" },
+  { href: "/jobs?saved=1", label: "Saved Jobs", saved: true },
   { href: "/counties", label: "Jobs by County" },
   { href: "/categories/teaching", label: "Teaching Jobs" },
   { href: "/about", label: "About Us" },
@@ -45,7 +46,7 @@ const employers = [
       <div class="bar">
         <div style="flex:1"><Logo /></div>
         <nav class="main" aria-label="Main">
-          <details class="menu"><summary>Job Seekers</summary><div class="drop">{seekers.map((l) => <a href={l.href}>{l.label}</a>)}</div></details>
+          <details class="menu"><summary>Job Seekers<span class="badge-count" data-saved-count hidden></span></summary><div class="drop">{seekers.map((l) => <a href={l.href}>{l.label}{"saved" in l && <span class="badge-count" data-saved-count hidden></span>}</a>)}</div></details>
           <details class="menu"><summary>Employers</summary><div class="drop">{employers.map((l) => <a href={l.href}>{l.label}</a>)}</div></details>
         </nav>
         <div class="cta">
@@ -53,7 +54,7 @@ const employers = [
         </div>
         <details class="mobile-menu">
           <summary aria-label="Menu"><Icon name="menu" class="" /></summary>
-          <div class="drop">{[...seekers, ...employers].map((l) => <a href={l.href}>{l.label}</a>)}</div>
+          <div class="drop">{[...seekers, ...employers].map((l) => <a href={l.href}>{l.label}{"saved" in l && <span class="badge-count" data-saved-count hidden></span>}</a>)}</div>
         </details>
       </div>
     </header>
@@ -73,6 +74,55 @@ const employers = [
       <div class="bottom">© {new Date().getFullYear()} {SITE.name} · Listings link to each employer's official application · <a href="/sitemap.xml">Sitemap</a></div>
     </footer>
     <script>
+      // ----- Saved jobs (kept on this device only) -----
+      const KEY = "msj-saved-jobs";
+      const readSaved = (): string[] => { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } };
+      const writeSaved = (list: string[]) => { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch {} };
+      function toast(msg: string) {
+        document.querySelector(".toast")?.remove();
+        const t = Object.assign(document.createElement("div"), { className: "toast", textContent: msg });
+        t.setAttribute("role", "status");
+        document.body.append(t); setTimeout(() => t.remove(), 2200);
+      }
+      function syncSaved() {
+        const saved = new Set(readSaved());
+        document.querySelectorAll<HTMLElement>("[data-save]").forEach((b) => {
+          const on = saved.has(b.dataset.save!);
+          b.setAttribute("aria-pressed", String(on));
+          const label = b.querySelector("[data-save-label]");
+          if (label) label.textContent = on ? "Saved" : "Save job";
+        });
+        document.querySelectorAll<HTMLElement>("[data-saved-count]").forEach((el) => { el.textContent = String(saved.size); el.hidden = saved.size === 0; });
+      }
+      document.addEventListener("click", (e) => {
+        const btn = (e.target as Element).closest<HTMLElement>("[data-save]");
+        if (!btn) return;
+        e.preventDefault();
+        const list = readSaved(); const slug = btn.dataset.save!;
+        const i = list.indexOf(slug);
+        if (i >= 0) { list.splice(i, 1); toast("Removed from saved jobs"); } else { list.unshift(slug); toast("Saved. Find it under Job Seekers → Saved Jobs"); }
+        writeSaved(list); syncSaved();
+        document.dispatchEvent(new CustomEvent("saved-changed"));
+      });
+      (window as any).msjSyncSaved = syncSaved;
+      (window as any).msjReadSaved = readSaved;
+      (window as any).msjToast = toast;
+
+      // ----- Friendly dates: "Today", "Yesterday", "3 days ago" -----
+      function relDates(root: ParentNode = document) {
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        root.querySelectorAll<HTMLTimeElement>("time[data-rel]").forEach((t) => {
+          const d = new Date(t.dateTime); d.setHours(0, 0, 0, 0);
+          const days = Math.round((today.getTime() - d.getTime()) / 86_400_000);
+          if (days <= 0) t.textContent = "Today";
+          else if (days === 1) t.textContent = "Yesterday";
+          else if (days < 14) t.textContent = `${days} days ago`;
+          t.title = d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+        });
+      }
+      (window as any).msjRelDates = relDates;
+      relDates(); syncSaved();
+
       // Close the other dropdown when one opens, and close on outside click.
       const menus = [...document.querySelectorAll<HTMLDetailsElement>("details.menu, details.mobile-menu")];
       menus.forEach((m) => m.addEventListener("toggle", () => { if (m.open) menus.forEach((o) => o !== m && (o.open = false)); }));

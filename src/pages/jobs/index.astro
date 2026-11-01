@@ -1,31 +1,46 @@
 ---
 import Base from "../../layouts/Base.astro";
 import JobCard from "../../components/JobCard.astro";
+import Icon from "../../components/Icon.astro";
 import { COUNTIES, JOB_TYPES } from "../../config/taxonomy.ts";
 import { jobs, allCategories, formatDate } from "../../lib/jobs.ts";
 // Only the fields the client-side filter needs, to keep the page light.
 const index = jobs.map((j) => ({
   s: j.slug, t: j.title, e: j.employer, c: j.county, ci: j.city, ty: j.type, ca: j.category,
-  p: formatDate(j.postedAt), f: j.featured ? 1 : 0, x: j.excerpt.slice(0, 160).toLowerCase(),
+  d: j.postedAt.slice(0, 10), p: formatDate(j.postedAt), f: j.featured ? 1 : 0, x: j.excerpt.slice(0, 160).toLowerCase(),
 }));
 const catNames = Object.fromEntries(allCategories.map((c) => [c.slug, c.name]));
-const INITIAL = 40;
+const INITIAL = 30;
 ---
 <Base title="Search Michigan school jobs" description="Filter every Michigan school job by county, category and job type.">
   <section class="page-hero"><div><h1>Positions</h1><p>Every open job from Michigan schools, updated every morning.</p></div></section>
   <div class="page">
-    <div class="wrap layout-search">
+    <div class="wrap layout-search" id="layout">
       <div>
-        <p class="result-count" id="count" aria-live="polite">{jobs.length.toLocaleString()} open jobs</p>
+        <div class="searchbar" role="search">
+          <label class="field"><span class="sr-only">Search jobs</span><Icon name="search" /><input id="q" type="search" form="filters" name="q" placeholder="Search jobs: speech, bus driver, Ann Arbor…" autocomplete="off" enterkeyhint="search" /></label>
+          <button class="btn toggle-filters" type="button" id="toggle-filters" aria-controls="filters" aria-expanded="false"><Icon name="filter" />Filters<span class="badge-count" id="filter-count" hidden></span></button>
+        </div>
+        <div class="active-chips" id="chips" aria-label="Active filters"></div>
+        <div class="toolbar">
+          <p class="result-count" id="count" aria-live="polite">{jobs.length.toLocaleString()} open jobs</p>
+          <label><span class="sr-only">Sort by</span>
+            <select id="sort" name="sort" form="filters">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title">Job title A–Z</option>
+              <option value="employer">District A–Z</option>
+            </select>
+          </label>
+        </div>
         <div class="results" id="results">
           {jobs.slice(0, INITIAL).map((job) => <JobCard job={job} />)}
         </div>
         {jobs.length === 0 && <div class="panel empty">No jobs listed yet. Check back tomorrow morning.</div>}
         <p style="text-align:center;margin-top:28px"><button class="btn btn-green" id="more" type="button" hidden>Show more jobs</button></p>
       </div>
-      <form class="filters" id="filters" role="search" aria-label="Filter jobs">
-        <h2>Search jobs</h2>
-        <label>Keyword<input name="q" type="search" placeholder="Title, district, keyword" /></label>
+      <form class="filters" id="filters" aria-label="Filter jobs">
+        <h2>Filter jobs</h2>
         <label>County
           <select name="county"><option value="">All counties</option>{COUNTIES.map((c) => <option value={c}>{c}</option>)}</select>
         </label>
@@ -35,71 +50,157 @@ const INITIAL = 40;
         <label>Job type
           <select name="type"><option value="">All types</option>{JOB_TYPES.map((t) => <option value={t}>{t}</option>)}</select>
         </label>
-        <button type="reset" class="btn btn-ghost-green">Clear filters</button>
+        <label>Posted
+          <select name="posted"><option value="">Any time</option><option value="1">Last 24 hours</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select>
+        </label>
+        <label class="saved-toggle"><input type="checkbox" name="saved" value="1" />Only my saved jobs</label>
+        <button type="reset" class="btn btn-ghost-green">Clear all</button>
       </form>
     </div>
   </div>
   <script is:inline id="job-index" type="application/json" set:html={JSON.stringify({ jobs: index, cats: catNames })} />
   <script>
-    type J = { s: string; t: string; e: string; c: string; ci: string; ty: string; ca: string; p: string; f: number; x: string };
+    type J = { s: string; t: string; e: string; c: string; ci: string; ty: string; ca: string; d: string; p: string; f: number; x: string };
     const { jobs, cats } = JSON.parse(document.getElementById("job-index")!.textContent!) as { jobs: J[]; cats: Record<string, string> };
+    const w = window as any;
     const form = document.getElementById("filters") as HTMLFormElement;
+    const layout = document.getElementById("layout")!;
     const results = document.getElementById("results")!;
     const count = document.getElementById("count")!;
+    const chips = document.getElementById("chips")!;
     const more = document.getElementById("more") as HTMLButtonElement;
-    const PAGE = 40;
+    const toggle = document.getElementById("toggle-filters") as HTMLButtonElement;
+    const filterCount = document.getElementById("filter-count")!;
+    const PAGE = 30;
     let shown = PAGE;
     let matches: J[] = jobs;
 
+    // Everyday words and abbreviations people type -> words that appear in postings.
+    const SYNONYMS: Record<string, string[]> = {
+      slp: ["speech"], speech: ["speech", "slp"], ot: ["occupational"], pt: ["physical therap"], psych: ["psycholog"],
+      para: ["para", "aide", "assistant"], aide: ["aide", "para", "assistant"], sped: ["special ed", "sped", "resource"],
+      sub: ["substitute", " sub "], substitute: ["substitute", " sub "], bcba: ["bcba", "behavior"], rbt: ["behavior", "rbt"],
+      gsrp: ["gsrp", "preschool"], prek: ["pre-k", "preschool", "prek"], esl: ["esl", "ell", "english learner"], ell: ["ell", "esl", "english learner"],
+      custodian: ["custod"], janitor: ["custod"], nurse: ["nurse"], counselor: ["counsel"], principal: ["principal"],
+      driver: ["driver"], bus: ["bus"], cook: ["cook", "food service", "kitchen"], lunch: ["lunch", "food service", "noon"],
+    };
+    const termAlternatives = (t: string) => SYNONYMS[t] ?? [t];
+
     const esc = (s: string) => s.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]!);
-    const ICON = { b: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13M9 21v-5h6v5M8 11h.01M12 11h.01M16 11h.01"/></svg>', c: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>', w: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>' };
+    const svg = (d: string) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+    const ICON = {
+      b: svg('<path d="M4 21V8l8-5 8 5v13M9 21v-5h6v5M8 11h.01M12 11h.01M16 11h.01"/>'),
+      c: svg('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/>'),
+      w: svg('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>'),
+      h: svg('<path d="M12 20s-7-4.4-9.2-8.6C1.3 8.4 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6C12 6.1 13.6 5 15.6 5 19 5 20.7 8.4 19.2 11.4 17 15.6 12 20 12 20z"/>'),
+      x: svg('<path d="M18 6 6 18M6 6l12 12"/>'),
+    };
     const slug = (c: string) => c.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const card = (j: J) => `
       <article class="job${j.f ? " featured" : ""}"><div style="min-width:0">
-        <h3 class="title"><a href="/jobs/${j.s}">${esc(j.t)}</a></h3>
-        <div class="meta"><span class="item">${ICON.b}${esc(j.e)}</span><span class="item">${ICON.c}${esc(j.p)}</span><span class="item">${ICON.w}${esc(j.ty)}</span></div>
+        <h3 class="title"><a class="stretch" href="/jobs/${j.s}">${esc(j.t)}</a></h3>
+        <div class="meta"><span class="item">${ICON.b}${esc(j.e)}</span><span class="item">${ICON.c}<time datetime="${j.d}T12:00:00" data-rel>${esc(j.p)}</time></span><span class="item">${ICON.w}${esc(j.ty)}</span></div>
         <div class="tags"><span class="tag">${esc(cats[j.ca] ?? "Other")}</span>${j.f ? '<span class="tag green">Featured</span>' : ""}</div>
-      </div><div class="side"><a class="county" href="/counties/${slug(j.c)}">${esc(j.c)} County</a><a class="btn btn-ghost-green" href="/jobs/${j.s}">View Job</a></div></article>`;
+      </div><div class="side"><a class="county above" href="/counties/${slug(j.c)}">${esc(j.c)} County</a>
+        <button class="save above" type="button" data-save="${j.s}" aria-pressed="false" aria-label="Save ${esc(j.t)}">${ICON.h}</button>
+        <span class="btn btn-ghost-green view" aria-hidden="true">View Job</span></div></article>`;
 
     function render() {
+      const saved = form.saved.checked;
       results.innerHTML = matches.length
         ? matches.slice(0, shown).map(card).join("")
-        : '<div class="panel empty">No jobs match those filters. Try a nearby county or clear the keyword.</div>';
-      count.textContent = `${matches.length.toLocaleString()} open ${matches.length === 1 ? "job" : "jobs"}`;
+        : saved
+          ? '<div class="panel empty">You haven\'t saved any jobs that match. Tap the ♥ on any job to save it here.</div>'
+          : '<div class="panel empty">No jobs match those filters. Try a nearby county, a shorter keyword, or <button type="button" class="btn btn-ghost-green btn-sm" id="empty-clear">clear all filters</button></div>';
+      count.textContent = `${matches.length.toLocaleString()} ${saved ? "saved" : "open"} ${matches.length === 1 ? "job" : "jobs"}`;
       more.hidden = matches.length <= shown;
+      if (!more.hidden) more.textContent = `Show more jobs (${(matches.length - shown).toLocaleString()} more)`;
+      w.msjRelDates?.(results); w.msjSyncSaved?.();
+      document.getElementById("empty-clear")?.addEventListener("click", () => form.reset());
     }
 
-    function apply(pushUrl = true) {
+    const LABELS: Record<string, (v: string) => string> = {
+      q: (v) => `“${v}”`, county: (v) => `${v} County`, category: (v) => cats[v] ?? v, type: (v) => v,
+      posted: (v) => ({ "1": "Last 24 hours", "7": "Last 7 days", "30": "Last 30 days" })[v] ?? v, saved: () => "Saved jobs",
+    };
+
+    function apply(updateUrl = true) {
       const d = new FormData(form);
-      const q = String(d.get("q") || "").trim().toLowerCase();
-      const county = String(d.get("county") || "");
-      const category = String(d.get("category") || "");
-      const type = String(d.get("type") || "");
+      const get = (k: string) => String(d.get(k) || "").trim();
+      const q = get("q").toLowerCase(), county = get("county"), category = get("category"), type = get("type");
+      const posted = Number(get("posted") || 0), sort = get("sort") || "newest";
+      const savedOnly = get("saved") === "1";
+      const savedSet = new Set<string>(w.msjReadSaved?.() ?? []);
       const terms = q.split(/\s+/).filter(Boolean);
-      matches = jobs.filter((j) =>
-        (!county || j.c === county) && (!category || j.ca === category) && (!type || j.ty === type) &&
-        terms.every((t) => `${j.t} ${j.e} ${j.ci} ${j.x}`.toLowerCase().includes(t)));
-      shown = PAGE;
+      const cutoff = posted ? Date.now() - posted * 86_400_000 : 0;
+      matches = jobs.filter((j) => {
+        if (county && j.c !== county) return false;
+        if (category && j.ca !== category) return false;
+        if (type && j.ty !== type) return false;
+        if (savedOnly && !savedSet.has(j.s)) return false;
+        if (cutoff && Date.parse(j.d) < cutoff - 86_400_000) return false;
+        if (!terms.length) return true;
+        const hay = ` ${j.t} ${j.e} ${j.ci} ${j.c} ${cats[j.ca] ?? ""} ${j.x} `.toLowerCase();
+        return terms.every((t) => termAlternatives(t).some((alt) => hay.includes(alt)));
+      });
+      const by: Record<string, (a: J, b: J) => number> = {
+        newest: (a, b) => b.d.localeCompare(a.d), oldest: (a, b) => a.d.localeCompare(b.d),
+        title: (a, b) => a.t.localeCompare(b.t), employer: (a, b) => a.e.localeCompare(b.e) || b.d.localeCompare(a.d),
+      };
+      matches.sort((a, b) => b.f - a.f || by[sort](a, b)); // paid featured jobs always first
+      if (savedOnly) matches.sort((a, b) => [...savedSet].indexOf(a.s) - [...savedSet].indexOf(b.s));
+
+      // Active filter chips (tap to remove)
+      const active = ["q", "county", "category", "type", "posted", "saved"].filter((k) => get(k));
+      chips.innerHTML = active.map((k) => `<button type="button" data-clear="${k}" aria-label="Remove filter ${esc(LABELS[k](get(k)))}">${esc(LABELS[k](get(k)))} ${ICON.x}</button>`).join("");
+      const nFilters = active.filter((k) => k !== "q").length;
+      filterCount.textContent = String(nFilters); filterCount.hidden = nFilters === 0;
+
       render();
-      if (pushUrl) {
+      if (updateUrl) {
         const params = new URLSearchParams();
-        for (const [k, v] of d.entries()) if (String(v)) params.set(k, String(v));
+        for (const k of [...active, ...(sort !== "newest" ? ["sort"] : [])]) params.set(k, get(k));
         history.replaceState(null, "", params.size ? `?${params}` : location.pathname);
       }
     }
 
-    // Restore filters from the URL so searches are shareable (and the home page search works).
+    chips.addEventListener("click", (e) => {
+      const b = (e.target as Element).closest<HTMLElement>("[data-clear]");
+      if (!b) return;
+      const el = form.elements.namedItem(b.dataset.clear!) as HTMLInputElement | HTMLSelectElement;
+      if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = false; else el.value = "";
+      apply();
+    });
+    toggle.addEventListener("click", () => {
+      const open = layout.classList.toggle("show-filters");
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+
+    // Restore filters from the URL (shareable searches; the home page search lands here).
     const params = new URLSearchParams(location.search);
-    for (const name of ["q", "county", "category", "type"]) {
+    for (const name of ["q", "county", "category", "type", "posted", "sort", "saved"]) {
       const el = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
-      if (el && params.get(name)) el.value = params.get(name)!;
+      const v = params.get(name);
+      if (!el || !v) continue;
+      if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = v === "1"; else el.value = v;
     }
-    if (params.size) apply(false); else more.hidden = jobs.length <= PAGE;
+    // Coming back from a job page: show as many results as before so the scroll position still fits.
+    const shownKey = () => `msj-shown:${location.search}`;
+    try { shown = Math.max(PAGE, Number(sessionStorage.getItem(shownKey())) || PAGE); } catch {}
+    const keepShown = shown;
+    if (params.size) apply(false); else { more.hidden = jobs.length <= PAGE; if (!more.hidden) more.textContent = `Show more jobs (${(jobs.length - PAGE).toLocaleString()} more)`; }
+    if (keepShown > PAGE) { shown = keepShown; render(); }
 
     let timer: number | undefined;
-    form.addEventListener("input", () => { clearTimeout(timer); timer = window.setTimeout(() => apply(), 120); });
-    form.addEventListener("submit", (e) => { e.preventDefault(); apply(); });
+    form.addEventListener("input", () => { clearTimeout(timer); timer = window.setTimeout(() => apply(), 150); });
+    const qInput = document.getElementById("q") as HTMLInputElement;
+    qInput.addEventListener("input", () => { clearTimeout(timer); timer = window.setTimeout(() => apply(), 150); });
+    qInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); apply(); qInput.blur(); } });
+    document.getElementById("sort")!.addEventListener("change", () => apply());
+    form.addEventListener("change", () => apply());
+    form.addEventListener("submit", (e) => { e.preventDefault(); apply(); (document.activeElement as HTMLElement)?.blur?.(); });
     form.addEventListener("reset", () => setTimeout(() => apply(), 0));
-    more.addEventListener("click", () => { shown += PAGE; render(); });
+    more.addEventListener("click", () => { shown += PAGE; render(); try { sessionStorage.setItem(shownKey(), String(shown)); } catch {} });
+    document.addEventListener("saved-changed", () => { if (form.saved.checked) apply(false); });
   </script>
 </Base>

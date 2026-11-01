@@ -26,6 +26,7 @@ const jsonLd = {
 ---
 <Base title={`${job.title} — ${job.employer}`} description={`${job.title} at ${job.employer} in ${job.county} County, ${SITE.state}. ${job.type}. Apply on the employer's official site.`} jsonLd={jsonLd}>
   <section class="page-hero"><div>
+    <a class="back-link" href="/jobs" id="back"><Icon name="back" />Back to results</a>
     <div class="crumbs"><a href="/jobs">Positions</a> › <a href={`/counties/${countySlug(job.county)}`}>{job.county} County</a> › <a href={`/categories/${job.category}`}>{categoryName(job.category)}</a></div>
     <h1 style="font-size:clamp(28px,4vw,44px)">{job.title}</h1>
     <p>{job.employer}</p>
@@ -37,7 +38,11 @@ const jsonLd = {
           <div><Icon name="building" /><span>{job.employer}</span></div>
           <div><Icon name="pin" /><span>{job.city ? `${job.city}, ` : ""}{job.county} County, Michigan</span></div>
           <div><Icon name="briefcase" /><span>{job.type} · {categoryName(job.category)}</span></div>
-          <div><Icon name="calendar" /><span>Posted {formatDate(job.postedAt)}{job.deadline ? ` · Applications close ${formatDate(job.deadline)}` : ""}</span></div>
+          <div><Icon name="calendar" /><span>Posted <time datetime={job.postedAt} data-rel>{formatDate(job.postedAt)}</time>{job.deadline ? ` · Applications close ${formatDate(job.deadline)}` : ""}</span></div>
+        </div>
+        <div class="job-actions">
+          <button class="btn btn-soft" type="button" data-save={job.slug} aria-pressed="false"><Icon name="heart" /><span data-save-label>Save job</span></button>
+          <button class="btn btn-soft" type="button" id="share"><Icon name="share" />Share</button>
         </div>
         <div class="prose" style="margin-top:24px;border-top:1px solid var(--line);padding-top:20px">
           {job.excerpt ? <p>{job.excerpt}</p> : null}
@@ -57,4 +62,22 @@ const jsonLd = {
       </div>
     )}
   </div>
+  <script>
+    // "Back to results" returns to the exact search (filters + scroll) when the visitor came from it.
+    const back = document.getElementById("back") as HTMLAnchorElement;
+    try {
+      const ref = document.referrer ? new URL(document.referrer) : null;
+      if (ref && ref.origin === location.origin && ref.pathname !== location.pathname) {
+        back.href = ref.pathname + ref.search;
+        back.addEventListener("click", (e) => { e.preventDefault(); history.back(); });
+      }
+    } catch {}
+    document.getElementById("share")!.addEventListener("click", async () => {
+      const data = { title: document.title, url: location.href };
+      try {
+        if (navigator.share) await navigator.share(data);
+        else { await navigator.clipboard.writeText(location.href); (window as any).msjToast?.("Link copied. Paste it anywhere to share."); }
+      } catch {}
+    });
+  </script>
 </Base>

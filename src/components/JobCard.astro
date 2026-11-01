@@ -8,10 +8,10 @@ const { job, compact = false } = Astro.props;
 ---
 <article class:list={["job", { featured: job.featured }]}>
   <div style="min-width:0">
-    <h3 class="title"><a href={`/jobs/${job.slug}`}>{job.title}</a></h3>
+    <h3 class="title"><a class="stretch" href={`/jobs/${job.slug}`}>{job.title}</a></h3>
     <div class="meta">
       <span class="item"><Icon name="building" />{job.employer}</span>
-      <span class="item"><Icon name="calendar" />{formatDate(job.postedAt)}</span>
+      <span class="item"><Icon name="calendar" /><time datetime={job.postedAt} data-rel>{formatDate(job.postedAt)}</time></span>
       {!compact && <span class="item"><Icon name="briefcase" />{job.type}</span>}
     </div>
     {!compact && (
@@ -23,7 +23,8 @@ const { job, compact = false } = Astro.props;
     )}
   </div>
   <div class="side">
-    <a class="county" href={`/counties/${countySlug(job.county)}`}>{job.county} County</a>
-    <a class="btn btn-ghost-green" href={`/jobs/${job.slug}`}>View Job</a>
+    <a class="county above" href={`/counties/${countySlug(job.county)}`}>{job.county} County</a>
+    <button class="save above" type="button" data-save={job.slug} aria-pressed="false" aria-label={`Save ${job.title}`}><Icon name="heart" /></button>
+    <span class="btn btn-ghost-green view" aria-hidden="true">View Job</span>
   </div>
 </article>
