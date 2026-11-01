@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "17 9 * * *" # ~5am Eastern, every day
   workflow_dispatch:
+    inputs:
+      linkcheck_limit:
+        description: "Only check this many apply links (0 = all). For diagnosing."
+        required: false
+        default: "0"
 
 permissions:
   contents: write
@@ -25,6 +30,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run collect
+        env:
+          LINKCHECK_LIMIT: ${{ github.event.inputs.linkcheck_limit || '0' }}
       - run: npm run build # fail before committing if the new data breaks the site
       - name: Commit updated listings
         run: |

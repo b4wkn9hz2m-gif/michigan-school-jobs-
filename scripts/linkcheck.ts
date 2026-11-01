@@ -23,21 +23,28 @@ export function needsCheck(job: Job, now: Date): boolean {
   return !job.verifiedAt || now.getTime() - Date.parse(job.verifiedAt) > REVERIFY_DAYS * 86_400_000;
 }
 
+export type Sample = { url: string; status: number | string; snippet: string };
+const samples: Sample[] = [];
+export const failureSamples = () => samples;
+
 async function checkOne(job: Job, fetcher: Fetcher): Promise<string | null> {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const { status, body } = await fetcher(job.applyUrl);
       if (status >= 200 && status < 300 && pageConfirmsJob(body, job)) return null;
+      if (attempt === 1 && samples.length < 3) samples.push({ url: job.applyUrl, status, snippet: stripHtml(body).slice(0, 1500) });
       if (attempt === 1) return status >= 200 && status < 300 ? "page does not show this job" : `HTTP ${status}`;
     } catch (e) {
+      if (attempt === 1 && samples.length < 3) samples.push({ url: job.applyUrl, status: "error", snippet: String((e as Error).message) });
       if (attempt === 1) return `network error: ${(e as Error).message}`;
     }
   }
   return "unknown";
 }
 
-export async function verifyJobs(jobs: Job[], fetcher: Fetcher, now: Date, concurrency = 4) {
-  const toCheck = jobs.filter((j) => needsCheck(j, now));
+export async function verifyJobs(jobs: Job[], fetcher: Fetcher, now: Date, concurrency = 4, limit = 0) {
+  const pending = jobs.filter((j) => needsCheck(j, now));
+  const toCheck = limit > 0 ? pending.slice(0, limit) : pending;
   const results = new Map<string, string | null>();
   let i = 0;
   await Promise.all(Array.from({ length: Math.min(concurrency, toCheck.length) }, async () => {

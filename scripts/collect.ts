@@ -4,7 +4,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { applyFeatured, merge, normalize, type FeaturedRule, type Job, type RawPosting, type Source } from "./pipeline.ts";
 import { parseJsonLd } from "./adapters/jsonld.ts";
 import { fetchAppliTrack } from "./adapters/applitrack.ts";
-import { verifyJobs } from "./linkcheck.ts";
+import { failureSamples, verifyJobs } from "./linkcheck.ts";
 
 const UA = "MichiganSchoolJobsBot/1.0 (+job listings aggregator; links back to the original posting)";
 
@@ -44,14 +44,15 @@ async function main() {
     const res = await fetch(url, { headers: { "user-agent": UA }, redirect: "follow", signal: AbortSignal.timeout(30_000) });
     return { status: res.status, body: await res.text() };
   };
-  const links = process.env.SKIP_LINK_CHECK ? { kept: merged, broken: [], checked: 0, failures: 0, outage: false } : await verifyJobs(merged, fetcher, now);
+  const limit = Number(process.env.LINKCHECK_LIMIT || 0);
+  const links = process.env.SKIP_LINK_CHECK ? { kept: merged, broken: [], checked: 0, failures: 0, outage: false } : await verifyJobs(merged, fetcher, now, 4, limit);
   const jobs = applyFeatured(links.kept, featuredRules, now);
   const unverified = jobs.filter((j) => !j.verifiedAt).length;
 
   await writeFile("data/jobs.json", JSON.stringify(jobs, null, 1) + "\n");
   await writeFile("data/collect-report.json", JSON.stringify({
     ranAt: now.toISOString(), total: jobs.length, sources: report,
-    linkCheck: { checked: links.checked, failures: links.failures, outage: links.outage, removed: links.broken.length, stillUnverified: unverified, removedJobs: links.broken },
+    linkCheck: { checked: links.checked, failures: links.failures, outage: links.outage, removed: links.broken.length, stillUnverified: unverified, removedJobs: links.broken, failureSamples: failureSamples() },
   }, null, 1) + "\n");
   console.log(`Collected ${jobs.length} jobs from ${sources.length - failed.size}/${sources.length} sources.`);
   console.log(`Apply links: checked ${links.checked}, removed ${links.broken.length} broken${links.outage ? " (OUTAGE: nothing removed)" : ""}, unverified ${unverified}.`);
