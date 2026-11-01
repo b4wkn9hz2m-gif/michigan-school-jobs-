@@ -21,5 +21,9 @@
  {"id": "lapeer-isd", "employer": "Lapeer County ISD", "county": "Lapeer", "adapter": "applitrack", "url": "https://www.applitrack.com/lapeercisd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
  {"id": "muskegon-consortium", "employer": "Muskegon Area Schools Consortium", "county": "Muskegon", "adapter": "applitrack", "url": "https://www.applitrack.com/muskegonconsortium/onlineapp/jobpostings/view.asp?all=1&embed=1"},
  {"id": "calhoun-isd", "employer": "Calhoun Intermediate School District", "county": "Calhoun", "adapter": "applitrack", "url": "https://www.applitrack.com/calhouncounty/onlineapp/jobpostings/view.asp?all=1&embed=1"},
- {"id": "alpena-montmorency-alcona-esd", "employer": "Alpena-Montmorency-Alcona ESD", "county": "Alpena", "adapter": "applitrack", "url": "https://www.applitrack.com/amaesd/onlineapp/jobpostings/view.asp?all=1&embed=1"}
+ {"id": "alpena-montmorency-alcona-esd", "employer": "Alpena-Montmorency-Alcona ESD", "county": "Alpena", "adapter": "applitrack", "url": "https://www.applitrack.com/amaesd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "gratiot-isabella-resd", "employer": "Gratiot-Isabella RESD", "county": "Gratiot", "countyByEmployer": {"Beal City Public Schools": "Isabella", "Mt. Pleasant Schools": "Isabella", "Flextech High School": "Isabella"}, "adapter": "applitrack", "url": "https://www.applitrack.com/giresd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "branch-isd", "employer": "Branch Intermediate School District", "county": "Branch", "adapter": "applitrack", "url": "https://www.applitrack.com/branchisd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "livingston-esa", "employer": "Livingston ESA Application Consortium", "county": "Livingston", "adapter": "applitrack", "url": "https://www.applitrack.com/lesa/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "jackson-isd", "employer": "Jackson County ISD", "county": "Jackson", "adapter": "applitrack", "url": "https://www.applitrack.com/jcisd/onlineapp/jobpostings/view.asp?all=1&embed=1"}
 ]
