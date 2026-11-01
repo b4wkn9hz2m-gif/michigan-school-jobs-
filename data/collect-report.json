@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T19:13:12.538Z",
- "total": 2210,
+ "ranAt": "2026-11-01T19:14:20.680Z",
+ "total": 2214,
  "sources": [
   {
    "id": "oakland-schools",
@@ -34,70 +34,37 @@
   }
  ],
  "linkCheck": {
-  "checked": 6,
-  "failures": 6,
+  "checked": 12,
+  "failures": 2,
   "outage": false,
-  "removed": 6,
-  "stillUnverified": 2210,
+  "removed": 2,
+  "stillUnverified": 2204,
   "removedJobs": [
    {
-    "id": "0e3f17e3d46f",
-    "title": "26-ATH-17 Girls JV Head Soccer Coach; NFHS",
-    "employer": "Farmington Public Schools",
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18890_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "id": "bd3773b7d97b",
+    "title": "School Psychologist - Special Education",
+    "employer": "Grosse Pointe Public Schools",
+    "url": "https://www.applitrack.com/resa/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=4163_110&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
     "reason": "page does not show this job"
    },
    {
-    "id": "6d39364d1acb",
-    "title": "26-ATH-18 Boys Varsity Head Lacrosse Coach",
-    "employer": "Farmington Public Schools",
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18891_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
-    "reason": "page does not show this job"
-   },
-   {
-    "id": "3607484085a1",
-    "title": "Shared Services Certified K-8 Technology Teacher",
-    "employer": "Clarkston Community Schools",
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18892_46157&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
-    "reason": "page does not show this job"
-   },
-   {
-    "id": "c7f542d6cc5a",
-    "title": "26-NUTR-17 Kitchen Helper; FHS",
-    "employer": "Farmington Public Schools",
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18894_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
-    "reason": "page does not show this job"
-   },
-   {
-    "id": "73784c9cd0b6",
-    "title": "Special Education Paraprofessional Classroom 26-ESP-59",
-    "employer": "Farmington Public Schools",
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18893_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
-    "reason": "page does not show this job"
-   },
-   {
-    "id": "d59e7b1d763c",
-    "title": "Technical Assistant",
-    "employer": "Oakland Schools",
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18887_46166&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "id": "714633e846ae",
+    "title": "Substitute Teacher - Michigan Public School Retirees Only",
+    "employer": "Grosse Pointe Public Schools",
+    "url": "https://www.applitrack.com/resa/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=4164_110&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
     "reason": "page does not show this job"
    }
   ],
   "failureSamples": [
    {
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18890_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "url": "https://www.applitrack.com/resa/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=4163_110&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
     "status": 200,
-    "snippet": "Online Employment Application | Open Positions Open Positions for Oakland Schools FMLA regulations require all employers to post the updated FMLA notice . Click here to view the Job Postings. Powered by applicant tracking, a product of Frontline Education."
+    "snippet": "Online Employment Application | Open Positions Open Positions for Wayne County Schools Employment Network Openings as of 11/1/2026 (no results) Search Postings: Options Search Job Postings Posting contains: Title contains: In Category: Select Category Activities Administration Administrative Assistant Adult Education Athletics/Activities Central Office Clerical Coaching Coordinator Elementary School Teaching EPED (Extra Pay for Extra Duty) Extended Day Finance Food and Nutrition Services Food Service Food Services GSRP High School Teaching Internal Postings Livonia Early Childhood Center Maintenance/Custodial Maintenance/Custodial/Warehouse Middle School Teaching Misc Non Certified Groups Non-Affiliated Administrator Non-Affiliated Support Paraprofessional Parent Support Recreation Schedule B School Age Childcare (SACC) Secondary Secretarial/Clerical Security Share-Time Shared Time Program Special Education Specialized Services Student Support Services Substitute Support Staff Support Staff/Paraprofessional Technology Transportation Transportation Department and SubCategory: In District: -- Any District -- Advanced Technology Academy Allen Park Public Schools American Montessori Academy Barber Preparatory Academy Creative Montessori Academy Crestwood School District Dearborn Academy Dearborn Heights School District No. 7 Dearborn Public Schools Detroit Leadership Academy Ecorse Public Schools Flat Rock Community Schools Garden City Public Schools Gibraltar School District Gro"
    },
    {
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18893_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "url": "https://www.applitrack.com/resa/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=4164_110&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
     "status": 200,
-    "snippet": "Online Employment Application | Open Positions Open Positions for Oakland Schools FMLA regulations require all employers to post the updated FMLA notice . Click here to view the Job Postings. Powered by applicant tracking, a product of Frontline Education."
-   },
-   {
-    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18891_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
-    "status": 200,
-    "snippet": "Online Employment Application | Open Positions Open Positions for Oakland Schools FMLA regulations require all employers to post the updated FMLA notice . Click here to view the Job Postings. Powered by applicant tracking, a product of Frontline Education."
+    "snippet": "Online Employment Application | Open Positions Open Positions for Wayne County Schools Employment Network Openings as of 11/1/2026 (no results) Search Postings: Options Search Job Postings Posting contains: Title contains: In Category: Select Category Activities Administration Administrative Assistant Adult Education Athletics/Activities Central Office Clerical Coaching Coordinator Elementary School Teaching EPED (Extra Pay for Extra Duty) Extended Day Finance Food and Nutrition Services Food Service Food Services GSRP High School Teaching Internal Postings Livonia Early Childhood Center Maintenance/Custodial Maintenance/Custodial/Warehouse Middle School Teaching Misc Non Certified Groups Non-Affiliated Administrator Non-Affiliated Support Paraprofessional Parent Support Recreation Schedule B School Age Childcare (SACC) Secondary Secretarial/Clerical Security Share-Time Shared Time Program Special Education Specialized Services Student Support Services Substitute Support Staff Support Staff/Paraprofessional Technology Transportation Transportation Department and SubCategory: In District: -- Any District -- Advanced Technology Academy Allen Park Public Schools American Montessori Academy Barber Preparatory Academy Creative Montessori Academy Crestwood School District Dearborn Academy Dearborn Heights School District No. 7 Dearborn Public Schools Detroit Leadership Academy Ecorse Public Schools Flat Rock Community Schools Garden City Public Schools Gibraltar School District Gro"
    }
   ]
  }
