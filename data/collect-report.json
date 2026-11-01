@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T21:36:49.935Z",
- "total": 2685,
+ "ranAt": "2026-11-01T22:43:10.329Z",
+ "total": 2860,
  "sources": [
   {
    "id": "oakland-schools",
@@ -136,10 +136,50 @@
    "id": "jackson-isd",
    "ok": true,
    "count": 0
+  },
+  {
+   "id": "van-buren-consortium",
+   "ok": true,
+   "count": 46
+  },
+  {
+   "id": "clare-gladwin-resd",
+   "ok": true,
+   "count": 14
+  },
+  {
+   "id": "holland-public-schools",
+   "ok": true,
+   "count": 12
+  },
+  {
+   "id": "west-ottawa-public-schools",
+   "ok": true,
+   "count": 47
+  },
+  {
+   "id": "romeo-community-schools",
+   "ok": true,
+   "count": 56
+  },
+  {
+   "id": "newaygo-resa",
+   "ok": true,
+   "count": 0
+  },
+  {
+   "id": "heritage-southwest-isd",
+   "ok": true,
+   "count": 0
+  },
+  {
+   "id": "lenawee-isd",
+   "ok": true,
+   "count": 0
   }
  ],
  "linkCheck": {
-  "checked": 64,
+  "checked": 175,
   "failures": 0,
   "outage": false,
   "removed": 0,
