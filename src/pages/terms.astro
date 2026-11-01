@@ -1,0 +1,27 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config/site.ts";
+---
+<Base title="Terms of Service" description={`The rules for using ${SITE.name}.`}>
+  <section class="page-hero"><div><h1>Terms of Service</h1><p>Last updated November 1, 2026</p></div></section>
+  <div class="page"><div class="wrap" style="max-width:820px">
+    <div class="panel prose">
+      <p>By using {SITE.name} you agree to these terms.</p>
+      <h2 style="font-size:20px;font-weight:600">Using the site</h2>
+      <p>The site is free for job seekers. Please use it lawfully and do not try to disrupt it or copy it in bulk without our permission.</p>
+      <h2 style="font-size:20px;font-weight:600">Listings</h2>
+      <p>Most listings are gathered from employers' public postings. We work to keep them accurate and current, but we do not guarantee that any job is still open or that any detail is correct. We are not the employer, we do not hire, and we are not part of any hiring decision. Always confirm details on the employer's official page.</p>
+      <h2 style="font-size:20px;font-weight:600">Paid plans for employers</h2>
+      <p>Paid plans are processed by Stripe. A Featured Job Post is a one-time payment that pins one listing for the period described on the pricing page. District Pro and Agency are monthly subscriptions that renew until cancelled. You can cancel any time by emailing us, and cancellation takes effect at the end of the paid month. Because services begin quickly after purchase, payments are non-refundable except where the law requires, or where we fail to deliver what you paid for, in which case we will refund you. Featuring a job does not guarantee any number of views or applicants.</p>
+      <h2 style="font-size:20px;font-weight:600">Employer content</h2>
+      <p>If you submit a job, you confirm that you have the right to post it and that it is accurate and lawful. We may edit or remove any listing at our discretion.</p>
+      <h2 style="font-size:20px;font-weight:600">Removal requests</h2>
+      <p>If you are an employer and want a listing corrected or removed, email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> and we will act within one business day.</p>
+      <h2 style="font-size:20px;font-weight:600">No warranty and limits</h2>
+      <p>The site is provided as is, without promises of uptime or accuracy. To the fullest extent the law allows, we are not liable for losses arising from your use of the site, and our total liability for any paid plan is limited to the amount you paid us in the previous three months.</p>
+      <h2 style="font-size:20px;font-weight:600">Governing law and changes</h2>
+      <p>These terms are governed by the laws of the State of Michigan. We may update them by posting a new version here. See also our <a href="/privacy">Privacy Policy</a>.</p>
+      <p>Questions? Email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.</p>
+    </div>
+  </div></div>
+</Base>
