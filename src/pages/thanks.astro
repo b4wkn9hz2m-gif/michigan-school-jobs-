@@ -1,0 +1,18 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config/site.ts";
+---
+<Base title="Thank you" description="Payment received." noindex>
+  <section class="page-hero"><div><h1>Thank you!</h1><p>Your payment went through. A receipt is on its way to your email.</p></div></section>
+  <div class="page"><div class="wrap" style="max-width:760px">
+    <div class="panel prose">
+      <h2 style="font-size:20px;font-weight:600;margin-top:0">What happens next</h2>
+      <ul>
+        <li><strong>Featured Post:</strong> your job is pinned to the top of search and the home page within one business day.</li>
+        <li><strong>District Pro or Agency plan:</strong> we'll email you within one business day to set up your organization's listings.</li>
+      </ul>
+      <p>Questions or changes? Email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.</p>
+      <p><a class="btn btn-green" href="/jobs">Browse jobs</a></p>
+    </div>
+  </div></div>
+</Base>
