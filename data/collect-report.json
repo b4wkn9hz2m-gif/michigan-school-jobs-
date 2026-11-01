@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T19:11:08.044Z",
- "total": 2216,
+ "ranAt": "2026-11-01T19:13:12.538Z",
+ "total": 2210,
  "sources": [
   {
    "id": "oakland-schools",
@@ -34,11 +34,71 @@
   }
  ],
  "linkCheck": {
-  "checked": 2216,
-  "failures": 2216,
-  "outage": true,
-  "removed": 0,
-  "stillUnverified": 2216,
-  "removedJobs": []
+  "checked": 6,
+  "failures": 6,
+  "outage": false,
+  "removed": 6,
+  "stillUnverified": 2210,
+  "removedJobs": [
+   {
+    "id": "0e3f17e3d46f",
+    "title": "26-ATH-17 Girls JV Head Soccer Coach; NFHS",
+    "employer": "Farmington Public Schools",
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18890_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "reason": "page does not show this job"
+   },
+   {
+    "id": "6d39364d1acb",
+    "title": "26-ATH-18 Boys Varsity Head Lacrosse Coach",
+    "employer": "Farmington Public Schools",
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18891_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "reason": "page does not show this job"
+   },
+   {
+    "id": "3607484085a1",
+    "title": "Shared Services Certified K-8 Technology Teacher",
+    "employer": "Clarkston Community Schools",
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18892_46157&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "reason": "page does not show this job"
+   },
+   {
+    "id": "c7f542d6cc5a",
+    "title": "26-NUTR-17 Kitchen Helper; FHS",
+    "employer": "Farmington Public Schools",
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18894_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "reason": "page does not show this job"
+   },
+   {
+    "id": "73784c9cd0b6",
+    "title": "Special Education Paraprofessional Classroom 26-ESP-59",
+    "employer": "Farmington Public Schools",
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18893_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "reason": "page does not show this job"
+   },
+   {
+    "id": "d59e7b1d763c",
+    "title": "Technical Assistant",
+    "employer": "Oakland Schools",
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18887_46166&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "reason": "page does not show this job"
+   }
+  ],
+  "failureSamples": [
+   {
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18890_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "status": 200,
+    "snippet": "Online Employment Application | Open Positions Open Positions for Oakland Schools FMLA regulations require all employers to post the updated FMLA notice . Click here to view the Job Postings. Powered by applicant tracking, a product of Frontline Education."
+   },
+   {
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18893_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "status": 200,
+    "snippet": "Online Employment Application | Open Positions Open Positions for Oakland Schools FMLA regulations require all employers to post the updated FMLA notice . Click here to view the Job Postings. Powered by applicant tracking, a product of Frontline Education."
+   },
+   {
+    "url": "https://www.applitrack.com/oaklandschools/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=18891_47236&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1",
+    "status": 200,
+    "snippet": "Online Employment Application | Open Positions Open Positions for Oakland Schools FMLA regulations require all employers to post the updated FMLA notice . Click here to view the Job Postings. Powered by applicant tracking, a product of Frontline Education."
+   }
+  ]
  }
 }
