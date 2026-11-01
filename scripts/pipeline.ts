@@ -129,7 +129,7 @@ export function normalize(raw: RawPosting, source: Source, now: Date): Job | nul
     firstSeenAt: now.toISOString(),
     lastSeenAt: now.toISOString(),
     applyUrl: raw.applyUrl,
-    excerpt: excerpt(text),
+    excerpt: excerpt(text, 1200),
     sourceId: source.id,
     featured: false,
   };

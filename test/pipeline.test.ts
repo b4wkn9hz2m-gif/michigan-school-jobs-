@@ -161,3 +161,12 @@ test("verificationUrl reads AppliTrack's server-rendered version of the same pos
   assert.equal(verificationUrl("https://www.applitrack.com/x/a.asp?embed=1"), "https://www.applitrack.com/x/a.asp?embed=1");
   assert.equal(verificationUrl("https://jobs.example.org/1"), "https://jobs.example.org/1");
 });
+
+test("AppliTrack jobs hosted on a member district's board link to that district's posting, with description", () => {
+  const html = readFileSync(new URL("./fixtures/applitrack-outside.html", import.meta.url), "utf8");
+  const src: Source = { id: "wayne-resa", employer: "Wayne RESA", county: "Wayne", adapter: "applitrack", url: "https://www.applitrack.com/resa/onlineapp/jobpostings/view.asp?all=1&embed=1" };
+  const [raw] = parseAppliTrack(html, src);
+  assert.equal(raw.applyUrl, "https://www.applitrack.com/GPSchools/onlineapp/JobPostings/view.asp?AppliTrackJobId=4163&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1");
+  assert.equal(raw.employer, "Grosse Pointe Public Schools");
+  assert.match(raw.description!, /POSITION DESCRIPTION: The School Psychologist is responsible/);
+});

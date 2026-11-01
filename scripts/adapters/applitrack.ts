@@ -41,10 +41,18 @@ export function parseAppliTrack(html: string, source: Source): RawPosting[] {
     // "Administration/Business Manager" -> "Administration / Business Manager"
     const positionType = field(block, "Position Type").replace(/\s*\/\s*/g, " / ").replace(/ \/$/, "").trim();
     const available = field(block, "Date Available");
-    const description = field(block, "Description");
+    // Full posting text lives in a hidden "Additional Information" block on many boards.
+    const extra = block.match(/id=['"]DescriptionText[\w]*['"][^>]*>([\s\S]*?)<\/span>\s*(?:<br\s*\/?>\s*)*(?:<div|<\/div|<span>|$)/i)?.[1];
+    const description = [field(block, "Description"), extra ? stripHtml(extra) : ""].filter(Boolean).join(" ");
 
+    // Consortium boards also list jobs that live on a member district's own AppliTrack site
+    // (Apply button calls applyForOutsideDistrict('<districtSlug>','<jobId>',...)). Those postings
+    // only open on the district's site, so link there.
+    const outside = block.match(/applyForOutsideDistrict\(\s*'([\w-]+)'\s*,\s*'(\d+)'/);
     const print = block.match(/href=['"](https:\/\/www\.applitrack\.com\/[^'"]+AppliTrackViewPosting=1)['"]/i)?.[1];
-    const applyUrl = (print ?? `https://www.applitrack.com/${slug}/onlineapp/JobPostings/view.asp?AppliTrackJobId=${postingId}&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1`).replace(/&amp;/g, "&");
+    const applyUrl = outside
+      ? `https://www.applitrack.com/${outside[1]}/onlineapp/JobPostings/view.asp?AppliTrackJobId=${outside[2]}&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1`
+      : (print ?? `https://www.applitrack.com/${slug}/onlineapp/JobPostings/view.asp?AppliTrackJobId=${postingId}&AppliTrackLayoutMode=detail&AppliTrackViewPosting=1`).replace(/&amp;/g, "&");
 
     const summary = [
       positionType && `Position type: ${positionType}.`,
