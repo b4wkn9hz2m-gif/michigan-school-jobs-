@@ -98,3 +98,19 @@ test("countyByEmployer overrides the source's default county", () => {
   assert.equal(normalize({ title: "Teacher", employer: "Mt. Pleasant Public Schools", applyUrl: "https://x.org/a" }, src, now)!.county, "Isabella");
   assert.equal(normalize({ title: "Teacher", employer: "Flint Community Schools", applyUrl: "https://x.org/b" }, src, now)!.county, "Kent");
 });
+
+import { applyFeatured } from "../scripts/pipeline.ts";
+
+test("applyFeatured pins matching paid jobs until the end date", () => {
+  const mk = (title: string, employer: string, d: string) => ({ ...normalize({ title, employer, applyUrl: `https://x.org/${title}`, postedAt: d }, source, now)! });
+  const jobs = [mk("Teacher", "A Schools", "2026-10-30"), mk("Speech Pathologist", "B Schools", "2026-10-01"), mk("Aide", "C Agency", "2026-09-01")];
+  const out = applyFeatured(jobs, [
+    { employer: "b schools", titleContains: "speech", until: "2026-12-01" },
+    { employer: "C Agency", until: "2026-12-01" },
+    { applyUrl: "https://x.org/Teacher", until: "2026-10-01" }, // expired
+    { until: "2026-12-01" }, // matches nothing (no criteria)
+  ], now);
+  assert.deepEqual(out.filter((j) => j.featured).map((j) => j.title), ["Speech Pathologist", "Aide"]);
+  assert.equal(out[0].featured, true);
+  assert.equal(out.at(-1)!.title, "Teacher");
+});

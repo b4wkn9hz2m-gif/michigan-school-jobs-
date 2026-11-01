@@ -132,6 +132,24 @@ export function normalize(raw: RawPosting, source: Source, now: Date): Job | nul
   };
 }
 
+export type FeaturedRule = { jobId?: string; applyUrl?: string; employer?: string; titleContains?: string; until: string; note?: string };
+
+/** Mark jobs that match an active paid placement. Unmatched or expired rules have no effect. */
+export function applyFeatured(jobs: Job[], rules: FeaturedRule[], now: Date): Job[] {
+  const active = rules.filter((r) => Date.parse(r.until) > now.getTime());
+  const matches = (j: Job, r: FeaturedRule) => {
+    if (r.jobId) return j.id === r.jobId;
+    if (r.applyUrl) return j.applyUrl === r.applyUrl;
+    if (!r.employer && !r.titleContains) return false;
+    if (r.employer && j.employer.toLowerCase() !== r.employer.toLowerCase()) return false;
+    if (r.titleContains && !j.title.toLowerCase().includes(r.titleContains.toLowerCase())) return false;
+    return true;
+  };
+  return jobs
+    .map((j) => ({ ...j, featured: active.some((r) => matches(j, r)) }))
+    .sort((a, b) => Number(b.featured) - Number(a.featured) || b.postedAt.localeCompare(a.postedAt));
+}
+
 /**
  * Merge this run's results with the previous dataset.
  * - Jobs seen again keep their original firstSeenAt (and featured flag).
@@ -144,7 +162,7 @@ export function merge(previous: Job[], fresh: Job[], failedSourceIds: Set<string
   const out = new Map<string, Job>();
   for (const j of fresh) {
     const p = prevById.get(j.id);
-    out.set(j.id, p ? { ...j, firstSeenAt: p.firstSeenAt, featured: p.featured } : j);
+    out.set(j.id, p ? { ...j, firstSeenAt: p.firstSeenAt } : j);
   }
   for (const p of previous) {
     if (out.has(p.id) || !failedSourceIds.has(p.sourceId)) continue;

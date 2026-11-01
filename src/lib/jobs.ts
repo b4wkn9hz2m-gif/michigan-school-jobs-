@@ -1,4 +1,6 @@
 import raw from "../../data/jobs.json";
+import featuredRules from "../../data/featured.json";
+import { applyFeatured, type FeaturedRule } from "../../scripts/pipeline.ts";
 import type { Job } from "../../scripts/pipeline.ts";
 import { CATEGORIES, COUNTIES, OTHER_CATEGORY, slugify } from "../config/taxonomy.ts";
 
@@ -11,7 +13,7 @@ const source: Job[] = fixturePath
   : (raw as Job[]);
 
 const now = Date.now();
-export const jobs: Job[] = source.filter((j) => Date.parse(j.expiresAt) > now);
+export const jobs: Job[] = applyFeatured(source.filter((j) => Date.parse(j.expiresAt) > now), featuredRules as FeaturedRule[], new Date(now));
 
 export const countySlug = (c: string) => slugify(c);
 export const allCategories = [...CATEGORIES.map(({ slug, name }) => ({ slug, name })), OTHER_CATEGORY];

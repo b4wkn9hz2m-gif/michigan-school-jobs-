@@ -1,7 +1,7 @@
 // Daily collector: reads sources/districts.json, fetches each source, and rewrites data/jobs.json.
 // Run with: npm run collect
 import { readFile, writeFile } from "node:fs/promises";
-import { merge, normalize, type Job, type RawPosting, type Source } from "./pipeline.ts";
+import { applyFeatured, merge, normalize, type FeaturedRule, type Job, type RawPosting, type Source } from "./pipeline.ts";
 import { parseJsonLd } from "./adapters/jsonld.ts";
 import { fetchAppliTrack } from "./adapters/applitrack.ts";
 
@@ -35,7 +35,8 @@ async function main() {
     await new Promise((r) => setTimeout(r, 500)); // be polite to district servers
   }
 
-  const jobs = merge(previous, fresh, failed, now);
+  const featuredRules: FeaturedRule[] = JSON.parse(await readFile("data/featured.json", "utf8").catch(() => "[]"));
+  const jobs = applyFeatured(merge(previous, fresh, failed, now), featuredRules, now);
   await writeFile("data/jobs.json", JSON.stringify(jobs, null, 1) + "\n");
   await writeFile("data/collect-report.json", JSON.stringify({ ranAt: now.toISOString(), total: jobs.length, sources: report }, null, 1) + "\n");
   console.log(`Collected ${jobs.length} jobs from ${sources.length - failed.size}/${sources.length} sources.`);

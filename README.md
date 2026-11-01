@@ -42,4 +42,5 @@ JOBS_FIXTURE=test/fixtures/jobs.json npm run build   # preview with SYNTHETIC te
 - [ ] Have a lawyer glance at terms/privacy for an aggregator; honor removal requests within 1 business day
 - [ ] Connect Cloudflare Pages and add the custom domain
 - [ ] Submit the sitemap in Google Search Console
-- [ ] Create Stripe Payment Links for the paid plans
+- [ ] Create Stripe Payment Links for the paid plans and paste them into `paymentLinks` in `src/config/site.ts`
+- [ ] When someone pays for a featured post or plan, add an entry to `data/featured.json` (see `data/FEATURED.md`)
