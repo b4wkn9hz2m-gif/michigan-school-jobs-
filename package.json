@@ -1,0 +1,15 @@
+{
+  "name": "michigan-school-jobs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "collect": "node scripts/collect.ts",
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}

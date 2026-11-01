@@ -1,0 +1,57 @@
+---
+import Base from "../../layouts/Base.astro";
+import JobCard from "../../components/JobCard.astro";
+import { SITE } from "../../config/site.ts";
+import { categoryName } from "../../config/taxonomy.ts";
+import { jobs, formatDate, countySlug, type Job } from "../../lib/jobs.ts";
+
+export function getStaticPaths() {
+  return jobs.map((job) => ({ params: { slug: job.slug }, props: { job } }));
+}
+const { job } = Astro.props as { job: Job };
+const related = jobs.filter((j) => j.id !== job.id && j.county === job.county && j.category === job.category).slice(0, 4);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "JobPosting",
+  title: job.title,
+  description: job.excerpt || job.title,
+  datePosted: job.postedAt,
+  validThrough: job.expiresAt,
+  employmentType: { "Full Time": "FULL_TIME", "Part Time": "PART_TIME", Substitute: "PER_DIEM", Temporary: "TEMPORARY", Internship: "INTERN" }[job.type],
+  hiringOrganization: { "@type": "Organization", name: job.employer },
+  jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: job.city || undefined, addressRegion: SITE.stateCode, addressCountry: "US" } },
+  url: job.applyUrl,
+};
+---
+<Base title={`${job.title} — ${job.employer}`} description={`${job.title} at ${job.employer} in ${job.county} County, ${SITE.state}. ${job.type}. Apply on the employer's official site.`} jsonLd={jsonLd}>
+  <div class="wrap page">
+    <div class="crumbs"><a href="/jobs">Jobs</a> › <a href={`/counties/${countySlug(job.county)}`}>{job.county} County</a> › <a href={`/categories/${job.category}`}>{categoryName(job.category)}</a></div>
+    <div class="detail">
+      <div class="panel">
+        <h1>{job.title}</h1>
+        <div class="meta" style="margin-bottom:16px">
+          <span>{job.employer}</span>
+          <span>{job.city ? `${job.city}, ` : ""}{job.county} County</span>
+          <span>{job.type}</span>
+          <span>Posted {formatDate(job.postedAt)}</span>
+        </div>
+        <span class="pill">{categoryName(job.category)}</span>
+        <div class="prose" style="margin-top:20px">
+          {job.excerpt ? <p>{job.excerpt}</p> : <p>Full details, requirements and salary are on the employer's posting.</p>}
+          <p>Listing closes {formatDate(job.expiresAt)} or when filled.</p>
+        </div>
+      </div>
+      <aside class="panel">
+        <!-- One clear apply action (a lesson from the Ohio hub). -->
+        <a class="btn" style="width:100%" href={job.applyUrl} rel="noopener nofollow" target="_blank">Apply on {job.employer}'s site ↗</a>
+        <p style="color:var(--muted);font-size:0.88rem;margin:12px 0 0">You'll apply directly with the employer. {SITE.name} never charges job seekers.</p>
+      </aside>
+    </div>
+    {related.length > 0 && (
+      <section style="margin-top:40px">
+        <h2 style="font-size:1.25rem">Similar jobs in {job.county} County</h2>
+        <div class="job-list">{related.map((j) => <JobCard job={j} />)}</div>
+      </section>
+    )}
+  </div>
+</Base>

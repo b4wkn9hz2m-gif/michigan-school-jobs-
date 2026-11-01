@@ -1,0 +1,24 @@
+---
+import type { Job } from "../lib/jobs.ts";
+import { formatDate, isNew } from "../lib/jobs.ts";
+import { categoryName } from "../config/taxonomy.ts";
+interface Props { job: Job }
+const { job } = Astro.props;
+---
+<article class:list={["job", { featured: job.featured }]}>
+  <div>
+    <h3><a href={`/jobs/${job.slug}`}>{job.title}</a></h3>
+    <div class="meta">
+      <span>{job.employer}</span>
+      <span>{job.city ? `${job.city}, ` : ""}{job.county} County</span>
+      <span>{job.type}</span>
+      <span>Posted {formatDate(job.postedAt)}</span>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+      <span class="pill">{categoryName(job.category)}</span>
+      {job.featured && <span class="pill amber">Featured</span>}
+      {!job.featured && isNew(job) && <span class="pill amber">New</span>}
+    </div>
+  </div>
+  <a class="btn dark" href={`/jobs/${job.slug}`}>View Job</a>
+</article>

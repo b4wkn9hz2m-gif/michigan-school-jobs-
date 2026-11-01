@@ -1,0 +1,75 @@
+---
+import Base from "../layouts/Base.astro";
+import JobCard from "../components/JobCard.astro";
+import { SITE } from "../config/site.ts";
+import { COUNTIES } from "../config/taxonomy.ts";
+import { jobs, allCategories, countByCategory, countByCounty, countySlug } from "../lib/jobs.ts";
+const byCat = countByCategory();
+const topCounties = [...countByCounty().entries()].filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 12);
+const latest = jobs.slice(0, 8);
+const employers = new Set(jobs.map((j) => j.employer)).size;
+---
+<Base>
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge-free">100% free for job seekers</span>
+      <h1>Where Michigan schools and great educators find each other.</h1>
+      <p class="lead">
+        {jobs.length > 0
+          ? `${jobs.length.toLocaleString()} open jobs from ${employers.toLocaleString()} Michigan schools, updated every morning.`
+          : "Teaching, special education, therapy and support jobs from Michigan schools, updated every morning."}
+      </p>
+      <form class="search-bar" action="/jobs" method="get" role="search">
+        <input name="q" placeholder="Job title or keyword (e.g. speech, 3rd grade)" aria-label="Keyword" />
+        <select name="county" aria-label="County">
+          <option value="">All 83 counties</option>
+          {COUNTIES.map((c) => <option value={c}>{c} County</option>)}
+        </select>
+        <button class="btn" type="submit">Search jobs</button>
+      </form>
+      <div class="cta-row">
+        <a class="btn secondary" href="/post-a-job">Hiring? Post a job</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <h2>Positions by category</h2>
+      <div class="grid">
+        {allCategories.map((c) => (
+          <a class="tile" href={`/categories/${c.slug}`}>
+            <strong>{c.name}</strong>
+            <span>{byCat.get(c.slug) ?? 0} open {byCat.get(c.slug) === 1 ? "job" : "jobs"}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <h2>Latest jobs</h2>
+      {latest.length > 0 ? (
+        <div class="job-list">{latest.map((job) => <JobCard job={job} />)}</div>
+      ) : (
+        <div class="panel empty">New listings are on the way. The first districts are being added now.</div>
+      )}
+      {latest.length > 0 && <p style="margin-top:20px"><a class="btn dark" href="/jobs">See all {jobs.length.toLocaleString()} jobs</a></p>}
+    </div>
+  </section>
+
+  {topCounties.length > 0 && (
+    <section class="block" style="padding-top:0">
+      <div class="wrap">
+        <h2>Most openings by county</h2>
+        <div class="grid">
+          {topCounties.map(([c, n]) => (
+            <a class="tile" href={`/counties/${countySlug(c)}`}><strong>{c} County</strong><span>{n} open jobs</span></a>
+          ))}
+        </div>
+        <p style="margin-top:16px"><a href="/counties">Browse all 83 counties →</a></p>
+      </div>
+    </section>
+  )}
+</Base>

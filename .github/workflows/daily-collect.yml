@@ -1,0 +1,35 @@
+name: Daily job collection
+
+on:
+  schedule:
+    - cron: "17 9 * * *" # ~5am Eastern, every day
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run collect
+      - run: npm run build # fail before committing if the new data breaks the site
+      - name: Commit updated listings
+        run: |
+          git config user.name "listings-bot"
+          git config user.email "listings-bot@users.noreply.github.com"
+          git add data/jobs.json data/collect-report.json
+          git diff --cached --quiet || git commit -m "Update listings $(date -u +%F)"
+          git push

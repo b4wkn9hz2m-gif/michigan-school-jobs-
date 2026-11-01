@@ -1,0 +1,13 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config/site.ts";
+---
+<Base title="Contact" description={`Contact ${SITE.name}.`}>
+  <div class="wrap page" style="max-width:760px">
+    <h1>Contact us</h1>
+    <div class="panel prose">
+      <p>Questions, corrections, listing removals, or advertising: email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.</p>
+      <p>Schools: tell us your district name and the listing link, and we'll update or remove it within one business day.</p>
+    </div>
+  </div>
+</Base>

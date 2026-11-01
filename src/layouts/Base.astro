@@ -1,0 +1,60 @@
+---
+import "../styles.css";
+import { SITE } from "../config/site.ts";
+interface Props { title?: string; description?: string; noindex?: boolean; jsonLd?: object }
+const { title, description = SITE.description, noindex = false, jsonLd } = Astro.props;
+const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
+const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site).toString();
+const nav = [
+  { href: "/jobs", label: "Find Jobs" },
+  { href: "/counties", label: "By County" },
+  { href: "/post-a-job", label: "Post a Job" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/about", label: "About" },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site">
+      <div class="wrap">
+        <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>{SITE.name}</a>
+        <nav class="main" aria-label="Main">
+          {nav.map((n) => <a href={n.href} aria-current={path.startsWith(n.href) ? "page" : undefined}>{n.label}</a>)}
+        </nav>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site">
+      <div class="wrap">
+        <div>
+          <strong style="color:#fff">{SITE.name}</strong><br />
+          Free for job seekers. Listings link to each employer's official application.
+        </div>
+        <div>
+          <a href="/contact">Contact</a> · <a href="/pricing">For employers</a> · <a href="/sitemap.xml">Sitemap</a><br />
+          © {new Date().getFullYear()} {SITE.name}
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

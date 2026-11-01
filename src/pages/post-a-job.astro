@@ -1,0 +1,119 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config/site.ts";
+import { COUNTIES, JOB_TYPES } from "../config/taxonomy.ts";
+import { allCategories } from "../lib/jobs.ts";
+---
+<Base title="Post a job" description={`Post a school job to ${SITE.name}. Free for Michigan districts and charter schools.`}>
+  <div class="wrap page" style="max-width:820px">
+    <h1>Post a job</h1>
+    <p style="color:var(--muted);margin:0 0 24px">Free for Michigan public districts and charter schools. Agencies and contractors, see <a href="/pricing">pricing</a>. Posts are reviewed and go live within one business day.</p>
+
+    <div id="summary" class="error-summary" role="alert" tabindex="-1" hidden></div>
+    <div id="done" class="notice" role="status" hidden></div>
+
+    <form id="post-job" class="stack panel" novalidate>
+      <h2 style="margin:0;font-size:1.15rem">Your organization</h2>
+      <p style="margin:-8px 0 0;color:var(--muted);font-size:0.9rem">Saved on this device, so you only enter it once.</p>
+      <div class="row">
+        <label>Organization name *<input name="org" autocomplete="organization" /><span class="field-error"></span></label>
+        <label>Website<input name="website" type="url" placeholder="https://" /><span class="field-error"></span></label>
+      </div>
+      <div class="row">
+        <label>Contact email *<input name="email" type="email" autocomplete="email" /><span class="field-error"></span></label>
+        <label>Organization type *
+          <select name="orgType"><option value="">Select…</option><option>Public school district</option><option>Charter school / PSA</option><option>ISD / RESA</option><option>Private school</option><option>Staffing agency / contractor</option></select>
+          <span class="field-error"></span>
+        </label>
+      </div>
+
+      <h2 style="margin:8px 0 0;font-size:1.15rem">The job</h2>
+      <label>Job title *<input name="title" /><span class="field-error"></span></label>
+      <div class="row">
+        <label>County *<select name="county"><option value="">Select county…</option>{COUNTIES.map((c) => <option>{c}</option>)}</select><span class="field-error"></span></label>
+        <label>Job type *<select name="type"><option value="">Select type…</option>{JOB_TYPES.map((t) => <option>{t}</option>)}</select><span class="field-error"></span></label>
+      </div>
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend style="font-weight:700;font-size:0.9rem;margin-bottom:6px">Categories * <span style="font-weight:400;color:var(--muted)">(pick all that apply)</span></legend>
+        <div class="checks" data-group="categories">
+          {allCategories.map((c) => <label><input type="checkbox" name="categories" value={c.name} />{c.name}</label>)}
+        </div>
+        <span class="field-error" data-for="categories"></span>
+      </fieldset>
+      <label>Application link *<input name="applyUrl" type="url" placeholder="https://… where candidates apply" /><span class="field-error"></span></label>
+      <label>Description *<textarea name="description" rows="8" placeholder="Responsibilities, qualifications, salary range, start date"></textarea><span class="field-error"></span></label>
+      <button class="btn" type="submit">Submit job for review</button>
+    </form>
+  </div>
+
+  <script define:vars={{ contactEmail: SITE.contactEmail, siteName: SITE.name }}>
+    const form = document.getElementById("post-job");
+    const summary = document.getElementById("summary");
+    const done = document.getElementById("done");
+    const ORG_FIELDS = ["org", "website", "email", "orgType"];
+    const KEY = "msj-employer-profile";
+
+    // Remember organization details (Ohio lesson: never make employers retype them).
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+      for (const f of ORG_FIELDS) if (saved[f]) form.elements.namedItem(f).value = saved[f];
+    } catch {}
+
+    const isUrl = (v) => { try { const u = new URL(v); return u.protocol === "https:" || u.protocol === "http:"; } catch { return false; } };
+    const rules = {
+      org: (v) => (v ? "" : "Organization name is required"),
+      email: (v) => (!v ? "Contact email is required" : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? "" : "Enter a valid email"),
+      website: (v) => (!v || isUrl(v) ? "" : "Enter a full URL starting with https://"),
+      orgType: (v) => (v ? "" : "Choose an organization type"),
+      title: (v) => (v ? "" : "Job title is required"),
+      county: (v) => (v ? "" : "County is required"),
+      type: (v) => (v ? "" : "Job type is required"),
+      applyUrl: (v) => (!v ? "Application link is required" : isUrl(v) ? "" : "Enter a full URL starting with https://"),
+      description: (v) => (v.length >= 40 ? "" : "Add a description (at least 40 characters)"),
+    };
+
+    function errorSlot(name) {
+      if (name === "categories") return form.querySelector('[data-for="categories"]');
+      return form.elements.namedItem(name).closest("label").querySelector(".field-error");
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const errors = {};
+      for (const [name, check] of Object.entries(rules)) {
+        const msg = check(String(data.get(name) || "").trim());
+        if (msg) errors[name] = msg;
+      }
+      const cats = data.getAll("categories");
+      if (cats.length === 0) errors.categories = "Pick at least one category";
+
+      // Show EVERY problem at once (Ohio lesson: no fix-one-resubmit loops).
+      for (const name of [...Object.keys(rules), "categories"]) {
+        const slot = errorSlot(name);
+        slot.textContent = errors[name] || "";
+        if (name !== "categories") form.elements.namedItem(name).setAttribute("aria-invalid", errors[name] ? "true" : "false");
+      }
+      const list = Object.values(errors);
+      if (list.length) {
+        summary.innerHTML = `<strong>Please fix ${list.length} ${list.length === 1 ? "field" : "fields"}:</strong><ul>${list.map((m) => `<li>${m}</li>`).join("")}</ul>`;
+        summary.hidden = false;
+        summary.focus();
+        return;
+      }
+      summary.hidden = true;
+      try { localStorage.setItem(KEY, JSON.stringify(Object.fromEntries(ORG_FIELDS.map((f) => [f, String(data.get(f) || "")])))); } catch {}
+
+      // Until employer accounts launch, submissions go to the review inbox by email.
+      const g = (k) => String(data.get(k) || "").trim();
+      const body = [
+        `Organization: ${g("org")} (${g("orgType")})`, `Website: ${g("website")}`, `Contact: ${g("email")}`, "",
+        `Title: ${g("title")}`, `County: ${g("county")}`, `Type: ${g("type")}`, `Categories: ${cats.join(", ")}`,
+        `Apply: ${g("applyUrl")}`, "", g("description"),
+      ].join("\n");
+      location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(`New job post: ${g("title")} — ${g("org")}`)}&body=${encodeURIComponent(body.slice(0, 1800))}`;
+      done.textContent = `Your email app should open with the posting ready to send. If it doesn't, email the details to ${contactEmail}.`;
+      done.hidden = false;
+    });
+  </script>
+</Base>

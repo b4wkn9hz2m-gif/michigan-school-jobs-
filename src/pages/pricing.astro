@@ -1,0 +1,23 @@
+---
+import Base from "../layouts/Base.astro";
+import { PLANS } from "../config/taxonomy.ts";
+import { SITE } from "../config/site.ts";
+---
+<Base title="Pricing for schools and agencies" description="List your school's jobs free. Upgrade for featured placement, unlimited posts, or agency access.">
+  <div class="wrap page">
+    <h1>Simple pricing for employers</h1>
+    <p style="color:var(--muted);margin:0 0 28px;max-width:640px">Public school districts and charter schools are listed free, automatically. Paid plans add visibility and tools. Job seekers never pay.</p>
+    <div class="plans">
+      {PLANS.map((p) => (
+        <div class="plan">
+          <strong>{p.name}</strong>
+          <div class="price">{p.price}<span style="font-size:0.95rem;font-weight:500;color:var(--muted)"> {p.cadence}</span></div>
+          <ul>{p.features.map((f) => <li>{f}</li>)}</ul>
+          <a class="btn dark" href={p.id === "free" ? "/post-a-job" : `mailto:${SITE.contactEmail}?subject=${encodeURIComponent(`${p.name} plan — ${SITE.name}`)}`}>
+            {p.id === "free" ? "Post a job" : "Get started"}
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</Base>

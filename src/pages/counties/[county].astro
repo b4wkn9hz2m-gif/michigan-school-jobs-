@@ -1,0 +1,28 @@
+---
+import Base from "../../layouts/Base.astro";
+import JobCard from "../../components/JobCard.astro";
+import { COUNTIES } from "../../config/taxonomy.ts";
+import { jobs, allCategories, countByCategory, countySlug } from "../../lib/jobs.ts";
+export function getStaticPaths() {
+  return COUNTIES.map((county) => ({ params: { county: countySlug(county) }, props: { county } }));
+}
+const { county } = Astro.props as { county: string };
+const list = jobs.filter((j) => j.county === county);
+const cats = countByCategory(list);
+---
+<Base title={`School jobs in ${county} County, MI`} description={`${list.length} open school jobs in ${county} County, Michigan: teaching, special education, support staff and more.`} noindex={list.length === 0}>
+  <div class="wrap page">
+    <div class="crumbs"><a href="/counties">Counties</a> › {county}</div>
+    <h1>School jobs in {county} County</h1>
+    <p style="color:var(--muted);margin:0 0 20px">{list.length} open {list.length === 1 ? "job" : "jobs"} · updated daily</p>
+    {list.length > 0 && (
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+        {allCategories.filter((c) => (cats.get(c.slug) ?? 0) > 0).map((c) => (
+          <a class="pill" style="text-decoration:none;padding:6px 12px" href={`/jobs?county=${encodeURIComponent(county)}&category=${c.slug}`}>{c.name} ({cats.get(c.slug)})</a>
+        ))}
+      </div>
+    )}
+    {list.length > 0 ? <div class="job-list">{list.map((job) => <JobCard job={job} />)}</div>
+      : <div class="panel empty">No open listings in {county} County right now. <a href="/jobs">Search all of Michigan</a>.</div>}
+  </div>
+</Base>

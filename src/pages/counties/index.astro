@@ -1,0 +1,14 @@
+---
+import Base from "../../layouts/Base.astro";
+import { countByCounty, countySlug } from "../../lib/jobs.ts";
+const counts = [...countByCounty().entries()];
+---
+<Base title="School jobs by Michigan county" description="Browse school jobs in all 83 Michigan counties.">
+  <div class="wrap page">
+    <h1>School jobs by county</h1>
+    <p style="color:var(--muted);margin:0 0 24px">All 83 Michigan counties, from Wayne to Keweenaw.</p>
+    <div class="grid">
+      {counts.map(([c, n]) => <a class="tile" href={`/counties/${countySlug(c)}`}><strong>{c} County</strong><span>{n} open {n === 1 ? "job" : "jobs"}</span></a>)}
+    </div>
+  </div>
+</Base>

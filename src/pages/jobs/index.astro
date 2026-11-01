@@ -1,0 +1,100 @@
+---
+import Base from "../../layouts/Base.astro";
+import JobCard from "../../components/JobCard.astro";
+import { COUNTIES, JOB_TYPES } from "../../config/taxonomy.ts";
+import { jobs, allCategories, formatDate } from "../../lib/jobs.ts";
+// Only the fields the client-side filter needs, to keep the page light.
+const index = jobs.map((j) => ({
+  s: j.slug, t: j.title, e: j.employer, c: j.county, ci: j.city, ty: j.type, ca: j.category,
+  p: formatDate(j.postedAt), f: j.featured ? 1 : 0, x: j.excerpt.slice(0, 160).toLowerCase(),
+}));
+const catNames = Object.fromEntries(allCategories.map((c) => [c.slug, c.name]));
+const INITIAL = 40;
+---
+<Base title="Search Michigan school jobs" description="Filter every Michigan school job by county, category and job type.">
+  <div class="wrap layout-search">
+    <form class="filters" id="filters" role="search" aria-label="Filter jobs">
+      <label>Keyword<input name="q" type="search" placeholder="Title, district, keyword" /></label>
+      <label>County
+        <select name="county"><option value="">All counties</option>{COUNTIES.map((c) => <option value={c}>{c}</option>)}</select>
+      </label>
+      <label>Category
+        <select name="category"><option value="">All categories</option>{allCategories.map((c) => <option value={c.slug}>{c.name}</option>)}</select>
+      </label>
+      <label>Job type
+        <select name="type"><option value="">All types</option>{JOB_TYPES.map((t) => <option value={t}>{t}</option>)}</select>
+      </label>
+      <button type="reset" class="btn dark">Clear filters</button>
+    </form>
+    <div>
+      <h1 style="margin:0 0 8px;font-size:1.6rem">Michigan school jobs</h1>
+      <p class="result-count" id="count" aria-live="polite">{jobs.length.toLocaleString()} open jobs</p>
+      <div class="job-list" id="results">
+        {jobs.slice(0, INITIAL).map((job) => <JobCard job={job} />)}
+      </div>
+      {jobs.length === 0 && <div class="panel empty">No jobs listed yet. Check back tomorrow morning.</div>}
+      <p><button class="btn dark" id="more" type="button" hidden>Show more</button></p>
+    </div>
+  </div>
+  <script is:inline id="job-index" type="application/json" set:html={JSON.stringify({ jobs: index, cats: catNames })} />
+  <script>
+    type J = { s: string; t: string; e: string; c: string; ci: string; ty: string; ca: string; p: string; f: number; x: string };
+    const { jobs, cats } = JSON.parse(document.getElementById("job-index")!.textContent!) as { jobs: J[]; cats: Record<string, string> };
+    const form = document.getElementById("filters") as HTMLFormElement;
+    const results = document.getElementById("results")!;
+    const count = document.getElementById("count")!;
+    const more = document.getElementById("more") as HTMLButtonElement;
+    const PAGE = 40;
+    let shown = PAGE;
+    let matches: J[] = jobs;
+
+    const esc = (s: string) => s.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]!);
+    const card = (j: J) => `
+      <article class="job${j.f ? " featured" : ""}"><div>
+        <h3><a href="/jobs/${j.s}">${esc(j.t)}</a></h3>
+        <div class="meta"><span>${esc(j.e)}</span><span>${j.ci ? esc(j.ci) + ", " : ""}${esc(j.c)} County</span><span>${esc(j.ty)}</span><span>Posted ${esc(j.p)}</span></div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill">${esc(cats[j.ca] ?? "Other")}</span>${j.f ? '<span class="pill amber">Featured</span>' : ""}</div>
+      </div><a class="btn dark" href="/jobs/${j.s}">View Job</a></article>`;
+
+    function render() {
+      results.innerHTML = matches.length
+        ? matches.slice(0, shown).map(card).join("")
+        : '<div class="panel empty">No jobs match those filters. Try a nearby county or clear the keyword.</div>';
+      count.textContent = `${matches.length.toLocaleString()} open ${matches.length === 1 ? "job" : "jobs"}`;
+      more.hidden = matches.length <= shown;
+    }
+
+    function apply(pushUrl = true) {
+      const d = new FormData(form);
+      const q = String(d.get("q") || "").trim().toLowerCase();
+      const county = String(d.get("county") || "");
+      const category = String(d.get("category") || "");
+      const type = String(d.get("type") || "");
+      const terms = q.split(/\s+/).filter(Boolean);
+      matches = jobs.filter((j) =>
+        (!county || j.c === county) && (!category || j.ca === category) && (!type || j.ty === type) &&
+        terms.every((t) => `${j.t} ${j.e} ${j.ci} ${j.x}`.toLowerCase().includes(t)));
+      shown = PAGE;
+      render();
+      if (pushUrl) {
+        const params = new URLSearchParams();
+        for (const [k, v] of d.entries()) if (String(v)) params.set(k, String(v));
+        history.replaceState(null, "", params.size ? `?${params}` : location.pathname);
+      }
+    }
+
+    // Restore filters from the URL so searches are shareable (and the home page search works).
+    const params = new URLSearchParams(location.search);
+    for (const name of ["q", "county", "category", "type"]) {
+      const el = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+      if (el && params.get(name)) el.value = params.get(name)!;
+    }
+    if (params.size) apply(false); else more.hidden = jobs.length <= PAGE;
+
+    let timer: number | undefined;
+    form.addEventListener("input", () => { clearTimeout(timer); timer = window.setTimeout(() => apply(), 120); });
+    form.addEventListener("submit", (e) => { e.preventDefault(); apply(); });
+    form.addEventListener("reset", () => setTimeout(() => apply(), 0));
+    more.addEventListener("click", () => { shown += PAGE; render(); });
+  </script>
+</Base>

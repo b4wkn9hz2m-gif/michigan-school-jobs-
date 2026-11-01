@@ -1,0 +1,19 @@
+---
+import Base from "../../layouts/Base.astro";
+import JobCard from "../../components/JobCard.astro";
+import { jobs, allCategories } from "../../lib/jobs.ts";
+export function getStaticPaths() {
+  return allCategories.map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
+}
+const { cat } = Astro.props as { cat: { slug: string; name: string } };
+const list = jobs.filter((j) => j.category === cat.slug);
+---
+<Base title={`${cat.name} jobs at Michigan schools`} description={`${list.length} open ${cat.name.toLowerCase()} jobs at Michigan school districts and charter schools.`} noindex={list.length === 0}>
+  <div class="wrap page">
+    <div class="crumbs"><a href="/jobs">Jobs</a> › {cat.name}</div>
+    <h1>{cat.name} jobs in Michigan schools</h1>
+    <p style="color:var(--muted);margin:0 0 20px">{list.length} open {list.length === 1 ? "job" : "jobs"} · <a href={`/jobs?category=${cat.slug}`}>filter by county</a></p>
+    {list.length > 0 ? <div class="job-list">{list.map((job) => <JobCard job={job} />)}</div>
+      : <div class="panel empty">No open {cat.name.toLowerCase()} listings right now. <a href="/jobs">See all jobs</a>.</div>}
+  </div>
+</Base>
