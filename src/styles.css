@@ -10,7 +10,8 @@
   --soft-2: #f6f8ff;
   --page: #f4f6fc;
   --green: #16b379;
-  --green-dark: #0f9465;
+  --green-dark: #0a6b49;
+  --green-btn: #0a8558; /* white text on this passes WCAG AA (4.66:1); --green is for decoration */
   --ink: #111111;
   --muted: #4d4d4d;
   --line: #dfe5f5;
@@ -61,9 +62,9 @@ nav.main { display: flex; align-items: center; gap: 40px; }
 header.site .cta { flex: 1; display: flex; justify-content: flex-end; }
 .mobile-menu summary svg { width: 28px; height: 28px; color: #fff; }
 .btn-white { background: #fff; color: #000; }
-.btn-green { background: var(--green); color: #fff; }
-.btn-ghost-green { height: 50px; padding: 0 26px; background: transparent; color: var(--green); border: 2px solid var(--green); font-size: 17px; }
-.btn-ghost-green:hover { background: var(--green); color: #fff; opacity: 1; }
+.btn-green { background: var(--green-btn); color: #fff; }
+.btn-ghost-green { height: 50px; padding: 0 26px; background: transparent; color: var(--green-btn); border: 2px solid var(--green-btn); font-size: 17px; }
+.btn-ghost-green:hover { background: var(--green-btn); color: #fff; opacity: 1; }
 .btn-sm { height: 46px; font-size: 16px; padding: 0 20px; }
 
 /* ---------- Hero ---------- */
@@ -176,7 +177,7 @@ form.stack textarea { height: auto; padding: 10px 12px; }
 .plan .price { font-size: 38px; font-weight: 700; }
 .plan .price span { font-size: 15px; font-weight: 400; color: var(--muted); }
 .plan ul { padding-left: 20px; margin: 10px 0 20px; flex: 1; color: var(--muted); }
-.plan .soon { color: #8a8a8a; font-style: italic; }
+.plan .soon { color: #6b6b6b; font-style: italic; }
 
 form.stack { display: grid; gap: 18px; }
 form.stack .row { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; }
@@ -208,7 +209,7 @@ footer.site .bottom { background: #fff; text-align: center; font-size: 12px; pad
 .job .stretch::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius); }
 .job .above { position: relative; z-index: 1; }
 .job .view { pointer-events: none; }
-.job:hover .view { background: var(--green); color: #fff; }
+.job:hover .view { background: var(--green-btn); color: #fff; }
 .save { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: #8a94ad; display: inline-grid; place-items: center; cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
 .save svg { width: 22px; height: 22px; }
 .save:hover { color: #e0476b; border-color: #f2b8c6; }
