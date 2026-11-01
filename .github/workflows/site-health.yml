@@ -13,9 +13,9 @@ jobs:
         run: |
           fail=0
           check() { # url expected-text
-            out=$(curl -sS -L -m 30 -o page.html -w "%{http_code} %{url_effective}" "$1" 2>&1) || true
+            out=$(curl -sS -L -m 30 -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15" -D headers.txt -o page.html -w "%{http_code} %{url_effective}" "$1" 2>&1) || true
             code=${out%% *}
-            if [ "$code" = "200" ] && grep -qi "$2" page.html; then echo "OK    $code  $1"; else echo "FAIL  $out  $1 (looking for: $2)"; fail=1; fi
+            if [ "$code" = "200" ] && grep -qi "$2" page.html; then echo "OK    $code  $1"; else echo "FAIL  $out  $1 (looking for: $2)"; grep -iE "^(server|cf-mitigated|cf-ray|content-type):" headers.txt | tr -d '\r' | sed 's/^/        /'; head -c 300 page.html | tr '\n' ' ' | sed 's/^/        body: /'; echo; fail=1; fi
           }
           for host in https://michigan-school-jobs.com https://www.michigan-school-jobs.com; do
             check "$host/" "Michigan School"
