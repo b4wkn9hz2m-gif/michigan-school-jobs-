@@ -264,3 +264,6 @@ footer.site .bottom { background: #fff; text-align: center; font-size: 12px; pad
   .job .view { height: 44px; padding: 0 16px; font-size: 15px; }
   .job .title { font-size: 18px; }
 }
+
+/* Make the hidden attribute win over component display rules (e.g. the empty-state "Show more" button). */
+[hidden] { display: none !important; }
