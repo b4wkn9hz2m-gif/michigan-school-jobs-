@@ -183,7 +183,12 @@ const INITIAL = 30;
       const el = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
       const v = params.get(name);
       if (!el || !v) continue;
-      if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = v === "1"; else el.value = v;
+      if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = v === "1";
+      else {
+        // A county with no listings isn't in the dropdown; keep it selectable so an old link shows "0 jobs" instead of everything.
+        if (el instanceof HTMLSelectElement && ![...el.options].some((o) => o.value === v)) el.add(new Option(v, v));
+        el.value = v;
+      }
     }
     // Coming back from a job page: show as many results as before so the scroll position still fits.
     const shownKey = () => `msj-shown:${location.search}`;
