@@ -8,9 +8,8 @@
     "not_found_handling": "404-page"
   },
   // Keep the workers.dev address on until the custom domain is confirmed working.
-  "workers_dev": true,
-  // Serve the site on the real domain (the zone is in the same Cloudflare account).
-  "routes": [
-    { "pattern": "michigan-school-jobs.com", "custom_domain": true }
-  ]
+  "workers_dev": true
+  // The custom domain must be attached by the account owner in the Cloudflare dashboard
+  // (Workers & Pages -> michigan-school-jobs -> Settings -> Domains & Routes -> Add -> Custom domain):
+  // the deploy can't replace the new domain's Cloudflare Registrar placeholder on its own.
 }
