@@ -4,6 +4,7 @@ import JobCard from "../../components/JobCard.astro";
 import Icon from "../../components/Icon.astro";
 import { COUNTIES, JOB_TYPES } from "../../config/taxonomy.ts";
 import { jobs, allCategories, formatDate } from "../../lib/jobs.ts";
+const countiesWithJobs = COUNTIES.filter((c) => jobs.some((j) => j.county === c));
 // Only the fields the client-side filter needs, to keep the page light.
 const index = jobs.map((j) => ({
   s: j.slug, t: j.title, e: j.employer, c: j.county, ci: j.city, ty: j.type, ca: j.category,
@@ -42,7 +43,7 @@ const INITIAL = 30;
       <form class="filters" id="filters" aria-label="Filter jobs">
         <h2>Filter jobs</h2>
         <label>County
-          <select name="county"><option value="">All counties</option>{COUNTIES.map((c) => <option value={c}>{c}</option>)}</select>
+          <select name="county"><option value="">All counties</option>{countiesWithJobs.map((c) => <option value={c}>{c}</option>)}</select>
         </label>
         <label>Category
           <select name="category"><option value="">All categories</option>{allCategories.map((c) => <option value={c.slug}>{c.name}</option>)}</select>
