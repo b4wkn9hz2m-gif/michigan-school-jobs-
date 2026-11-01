@@ -25,5 +25,13 @@
  {"id": "gratiot-isabella-resd", "employer": "Gratiot-Isabella RESD", "county": "Gratiot", "countyByEmployer": {"Beal City Public Schools": "Isabella", "Mt. Pleasant Schools": "Isabella", "Flextech High School": "Isabella"}, "adapter": "applitrack", "url": "https://www.applitrack.com/giresd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
  {"id": "branch-isd", "employer": "Branch Intermediate School District", "county": "Branch", "adapter": "applitrack", "url": "https://www.applitrack.com/branchisd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
  {"id": "livingston-esa", "employer": "Livingston ESA Application Consortium", "county": "Livingston", "adapter": "applitrack", "url": "https://www.applitrack.com/lesa/onlineapp/jobpostings/view.asp?all=1&embed=1"},
- {"id": "jackson-isd", "employer": "Jackson County ISD", "county": "Jackson", "adapter": "applitrack", "url": "https://www.applitrack.com/jcisd/onlineapp/jobpostings/view.asp?all=1&embed=1"}
+ {"id": "jackson-isd", "employer": "Jackson County ISD", "county": "Jackson", "adapter": "applitrack", "url": "https://www.applitrack.com/jcisd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "van-buren-consortium", "employer": "Van Buren County Schools Consortium", "county": "Van Buren", "adapter": "applitrack", "url": "https://www.applitrack.com/vbc/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "clare-gladwin-resd", "employer": "Clare-Gladwin RESD", "county": "Clare", "adapter": "applitrack", "url": "https://www.applitrack.com/cgresd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "holland-public-schools", "employer": "Holland Public Schools", "county": "Ottawa", "adapter": "applitrack", "url": "https://www.applitrack.com/hollandpublicschools/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "west-ottawa-public-schools", "employer": "West Ottawa Public Schools", "county": "Ottawa", "adapter": "applitrack", "url": "https://www.applitrack.com/westottawa/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "romeo-community-schools", "employer": "Romeo Community Schools", "county": "Macomb", "adapter": "applitrack", "url": "https://www.applitrack.com/romeo/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "newaygo-resa", "employer": "Newaygo County RESA", "county": "Newaygo", "adapter": "applitrack", "url": "https://www.applitrack.com/ncresa/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "heritage-southwest-isd", "employer": "Heritage Southwest ISD", "county": "Cass", "adapter": "applitrack", "url": "https://www.applitrack.com/lewiscass/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "lenawee-isd", "employer": "Lenawee Intermediate School District", "county": "Lenawee", "adapter": "applitrack", "url": "https://www.applitrack.com/lisdus/onlineapp/jobpostings/view.asp?all=1&embed=1"}
 ]
