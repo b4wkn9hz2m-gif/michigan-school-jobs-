@@ -117,6 +117,7 @@ const employers = [
           if (days <= 0) t.textContent = "Today";
           else if (days === 1) t.textContent = "Yesterday";
           else if (days < 14) t.textContent = `${days} days ago`;
+          else if (days >= 365) t.textContent = "Over a year ago";
           t.title = d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
         });
       }
