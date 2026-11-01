@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T22:43:10.329Z",
- "total": 2860,
+ "ranAt": "2026-11-01T22:51:34.380Z",
+ "total": 2947,
  "sources": [
   {
    "id": "oakland-schools",
@@ -176,10 +176,40 @@
    "id": "lenawee-isd",
    "ok": true,
    "count": 0
+  },
+  {
+   "id": "battle-creek-public-schools",
+   "ok": true,
+   "count": 50
+  },
+  {
+   "id": "jenison-public-schools",
+   "ok": true,
+   "count": 15
+  },
+  {
+   "id": "reese-public-schools",
+   "ok": true,
+   "count": 9
+  },
+  {
+   "id": "vassar-public-schools",
+   "ok": true,
+   "count": 4
+  },
+  {
+   "id": "kingsley-area-schools",
+   "ok": true,
+   "count": 1
+  },
+  {
+   "id": "coopersville-area-public-schools",
+   "ok": true,
+   "count": 8
   }
  ],
  "linkCheck": {
-  "checked": 175,
+  "checked": 87,
   "failures": 0,
   "outage": false,
   "removed": 0,
