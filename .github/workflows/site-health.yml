@@ -28,8 +28,10 @@ jobs:
           echo "--- backup address:"
           check "https://michigan-school-jobs.shloimysicker.workers.dev/" "Michigan School" || true
           check "https://michigan-school-jobs.shloimysicker.workers.dev/jobs/" "Positions" || true
+          echo "--- bare domain (should redirect to www once the redirect rule is added):"
+          curl -sS -o /dev/null -m 30 -w "%{http_code} -> %{redirect_url}\n" https://michigan-school-jobs.com/ || true
           echo "--- main domain:"
-          for host in https://michigan-school-jobs.com https://www.michigan-school-jobs.com; do
+          for host in https://www.michigan-school-jobs.com; do
             check "$host/" "Michigan School"
             check "$host/jobs/" "Positions"
             check "$host/sitemap.xml" "<urlset"
@@ -37,6 +39,6 @@ jobs:
           done
           # A real job page and its Apply link
           job=$(grep -o 'https://michigan-school-jobs.com/jobs/[^<]*' page.html | head -1 || true)
-          curl -sS -m 30 https://michigan-school-jobs.com/sitemap.xml | grep -o 'https://michigan-school-jobs.com/jobs/[^<]*' | head -1 > joburl.txt || true
+          curl -sS -m 30 https://www.michigan-school-jobs.com/sitemap.xml | grep -o 'https://www.michigan-school-jobs.com/jobs/[^<]*' | head -1 > joburl.txt || true
           if [ -s joburl.txt ]; then check "$(cat joburl.txt)" "Apply for Job"; fi
           exit $fail
