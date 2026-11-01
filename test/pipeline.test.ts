@@ -114,3 +114,8 @@ test("applyFeatured pins matching paid jobs until the end date", () => {
   assert.equal(out[0].featured, true);
   assert.equal(out.at(-1)!.title, "Teacher");
 });
+
+test("normalize strips URLs pasted into titles", () => {
+  const j = normalize({ title: "Bus Driverhttps://www.applitrack.com/wisd/onlineapp/admin/x", employer: "", applyUrl: "https://x.org/u" }, source, now)!;
+  assert.equal(j.title, "Bus Driver");
+});

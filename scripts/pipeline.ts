@@ -100,7 +100,8 @@ export function jobId(employer: string, title: string, applyUrl: string): string
 }
 
 export function normalize(raw: RawPosting, source: Source, now: Date): Job | null {
-  const title = stripHtml(raw.title);
+  // Some postings paste an admin link into the title; drop any URL text.
+  const title = stripHtml(raw.title).replace(/https?:\/\/\S+/gi, "").replace(/\s+/g, " ").trim();
   if (!title || !/^https?:\/\//.test(raw.applyUrl)) return null;
   if (/\b(test only|do not apply|test posting)\b/i.test(title)) return null;
   const employer = stripHtml(raw.employer) || source.employer;
