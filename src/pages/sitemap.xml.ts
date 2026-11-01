@@ -6,7 +6,7 @@ export const GET: APIRoute = ({ site }) => {
   const byCounty = countByCounty();
   const byCat = countByCategory();
   const paths = [
-    "/", "/jobs", "/counties", "/pricing", "/about", "/contact", "/post-a-job",
+    "/", "/jobs", "/counties", "/pricing", "/about", "/contact", "/post-a-job", "/privacy", "/terms",
     ...COUNTIES.filter((c) => (byCounty.get(c) ?? 0) > 0).map((c) => `/counties/${countySlug(c)}`),
     ...allCategories.filter((c) => (byCat.get(c.slug) ?? 0) > 0).map((c) => `/categories/${c.slug}`),
     ...jobs.map((j) => `/jobs/${j.slug}`),
