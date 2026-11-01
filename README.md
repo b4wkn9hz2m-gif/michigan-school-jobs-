@@ -11,6 +11,8 @@ To clone it for another state, edit `src/config/site.ts` and the county list in 
 | `scripts/adapters/jsonld.ts` | Reads schema.org `JobPosting` data from careers pages | ✅ tested on a synthetic page |
 | `scripts/adapters/applitrack.ts` | Frontline AppliTrack (common in MI) | ✅ built against live pages (Nov 2026); 2,216 jobs parsed from 6 sources |
 | `sources/districts.json` | Job sources. Starts with 6 county consortium boards covering 104 districts/academies (Oakland, Wayne, Washtenaw, Genesee, Montcalm, Ionia) | ✅ first batch; add more ISDs to grow coverage |
+| `scripts/linkcheck.ts` | Opens every new apply link (and every link weekly) and confirms the employer's page shows that job; broken links are removed (an outage removes nothing) | ✅ tested |
+| `scripts/check-site.ts` | Runs after every build: each job must have exactly one Apply button pointing to its employer link, or the deploy is stopped | ✅ tested |
 | `.github/workflows/daily-collect.yml` | Runs the collector daily at ~5am ET, tests, builds, commits new data | ✅ written, not yet run on GitHub |
 | Website (`src/`) | Astro static site: home, search with filters, job pages, 83 county pages, category pages, pricing, post-a-job, sitemap | ✅ built, checked on desktop + mobile |
 | `supabase/migrations/0001_accounts.sql` | Phase 2: employer/seeker accounts, direct posts, applications, resumes | ✅ schema + security tested locally, not connected to the site yet |

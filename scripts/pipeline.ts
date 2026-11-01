@@ -46,6 +46,8 @@ export type Job = {
   excerpt: string;
   sourceId: string;
   featured: boolean;
+  // When the apply link was last opened and confirmed to show this job on the employer's site.
+  verifiedAt?: string;
 };
 
 export const LISTING_DAYS = 60;
@@ -163,7 +165,7 @@ export function merge(previous: Job[], fresh: Job[], failedSourceIds: Set<string
   const out = new Map<string, Job>();
   for (const j of fresh) {
     const p = prevById.get(j.id);
-    out.set(j.id, p ? { ...j, firstSeenAt: p.firstSeenAt } : j);
+    out.set(j.id, p ? { ...j, firstSeenAt: p.firstSeenAt, verifiedAt: p.verifiedAt } : j);
   }
   for (const p of previous) {
     if (out.has(p.id) || !failedSourceIds.has(p.sourceId)) continue;

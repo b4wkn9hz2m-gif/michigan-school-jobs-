@@ -119,3 +119,36 @@ test("normalize strips URLs pasted into titles", () => {
   const j = normalize({ title: "Bus Driverhttps://www.applitrack.com/wisd/onlineapp/admin/x", employer: "", applyUrl: "https://x.org/u" }, source, now)!;
   assert.equal(j.title, "Bus Driver");
 });
+
+import { pageConfirmsJob, verifyJobs } from "../scripts/linkcheck.ts";
+
+test("pageConfirmsJob matches the AppliTrack JobID or the title", () => {
+  const j = normalize({ title: "Business Manager", employer: "", applyUrl: "https://www.applitrack.com/maisd/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=4910_37258&AppliTrackViewPosting=1" }, source, now)!;
+  assert.ok(pageConfirmsJob(readFileSync(new URL("./fixtures/applitrack-maisd.html", import.meta.url), "utf8"), j));
+  assert.ok(pageConfirmsJob("<h1>Business&nbsp;Manager</h1>", j));
+  assert.ok(!pageConfirmsJob("<p>This posting is no longer available.</p>", j));
+});
+
+test("verifyJobs drops broken links, keeps good ones, and does nothing during an outage", async () => {
+  const mk = (n: number) => normalize({ title: `Teacher Number ${n}`, employer: "", applyUrl: `https://x.org/${n}` }, source, now)!;
+  const jobs = Array.from({ length: 12 }, (_, n) => mk(n));
+  const okFetch = async (url: string) => {
+    const n = Number(url.split("/").pop());
+    if (n === 3) return { status: 404, body: "" };
+    if (n === 7) return { status: 200, body: "<p>Posting closed</p>" };
+    return { status: 200, body: `<h1>Teacher Number ${n}</h1>` };
+  };
+  const r = await verifyJobs(jobs, okFetch, now, 3);
+  assert.equal(r.outage, false);
+  assert.deepEqual(r.broken.map((b) => b.title).sort(), ["Teacher Number 3", "Teacher Number 7"]);
+  assert.equal(r.kept.length, 10);
+  assert.ok(r.kept.every((j) => j.verifiedAt === now.toISOString()));
+  // Already verified recently -> not re-checked
+  const again = await verifyJobs(r.kept, async () => { throw new Error("should not fetch"); }, now);
+  assert.equal(again.checked, 0);
+  // Outage: everything fails -> nothing removed
+  const down = await verifyJobs(jobs, async () => { throw new Error("ECONNRESET"); }, now);
+  assert.equal(down.outage, true);
+  assert.equal(down.kept.length, 12);
+  assert.equal(down.broken.length, 0);
+});
