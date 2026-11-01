@@ -1,0 +1,10 @@
+// Lets Cloudflare's Workers "Import a repository" flow serve the built site.
+// (Cloudflare Pages ignores this file; there, set build output directory to `dist`.)
+{
+  "name": "michigan-school-jobs",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
