@@ -152,3 +152,12 @@ test("verifyJobs drops broken links, keeps good ones, and does nothing during an
   assert.equal(down.kept.length, 12);
   assert.equal(down.broken.length, 0);
 });
+
+import { verificationUrl } from "../scripts/linkcheck.ts";
+
+test("verificationUrl reads AppliTrack's server-rendered version of the same posting", () => {
+  assert.equal(verificationUrl("https://www.applitrack.com/x/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=1_2&AppliTrackViewPosting=1"),
+    "https://www.applitrack.com/x/OnlineApp/JobPostings/view.asp?all=1&AppliTrackJobId=1_2&AppliTrackViewPosting=1&embed=1");
+  assert.equal(verificationUrl("https://www.applitrack.com/x/a.asp?embed=1"), "https://www.applitrack.com/x/a.asp?embed=1");
+  assert.equal(verificationUrl("https://jobs.example.org/1"), "https://jobs.example.org/1");
+});

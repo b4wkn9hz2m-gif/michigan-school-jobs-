@@ -19,6 +19,16 @@ export function pageConfirmsJob(html: string, job: Job): boolean {
   return title.length >= 4 && norm(html).includes(title);
 }
 
+/**
+ * AppliTrack's normal posting page (what job seekers open in a browser) fills in the posting with
+ * JavaScript. The same page with `embed=1` is rendered on the server, so that's what we read to
+ * confirm the posting exists. The link shown to job seekers is unchanged.
+ */
+export function verificationUrl(applyUrl: string): string {
+  if (!/applitrack\.com\//i.test(applyUrl) || /[?&]embed=1\b/i.test(applyUrl)) return applyUrl;
+  return applyUrl + (applyUrl.includes("?") ? "&" : "?") + "embed=1";
+}
+
 export function needsCheck(job: Job, now: Date): boolean {
   return !job.verifiedAt || now.getTime() - Date.parse(job.verifiedAt) > REVERIFY_DAYS * 86_400_000;
 }
@@ -30,7 +40,7 @@ export const failureSamples = () => samples;
 async function checkOne(job: Job, fetcher: Fetcher): Promise<string | null> {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const { status, body } = await fetcher(job.applyUrl);
+      const { status, body } = await fetcher(verificationUrl(job.applyUrl));
       if (status >= 200 && status < 300 && pageConfirmsJob(body, job)) return null;
       if (attempt === 1 && samples.length < 3) samples.push({ url: job.applyUrl, status, snippet: stripHtml(body).slice(0, 1500) });
       if (attempt === 1) return status >= 200 && status < 300 ? "page does not show this job" : `HTTP ${status}`;
