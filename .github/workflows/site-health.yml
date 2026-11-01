@@ -1,0 +1,32 @@
+name: Site health check
+# Loads the live site like a visitor would. Runs daily and on demand; a failure means the site
+# (or a key page) is down, and GitHub emails the repo owner.
+on:
+  schedule:
+    - cron: "47 11 * * *" # ~7:47am Eastern, after the morning update
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check pages
+        run: |
+          fail=0
+          check() { # url expected-text
+            out=$(curl -sS -L -m 30 -o page.html -w "%{http_code} %{url_effective}" "$1" 2>&1) || true
+            code=${out%% *}
+            if [ "$code" = "200" ] && grep -qi "$2" page.html; then echo "OK    $code  $1"; else echo "FAIL  $out  $1 (looking for: $2)"; fail=1; fi
+          }
+          for host in https://michigan-school-jobs.com https://www.michigan-school-jobs.com; do
+            check "$host/" "Michigan School"
+            check "$host/jobs/" "Positions"
+            check "$host/sitemap.xml" "<urlset"
+            check "$host/counties/wayne/" "Wayne County"
+          done
+          # A real job page and its Apply link
+          job=$(grep -o 'https://michigan-school-jobs.com/jobs/[^<]*' page.html | head -1 || true)
+          curl -sS -m 30 https://michigan-school-jobs.com/sitemap.xml | grep -o 'https://michigan-school-jobs.com/jobs/[^<]*' | head -1 > joburl.txt || true
+          if [ -s joburl.txt ]; then check "$(cat joburl.txt)" "Apply for Job"; fi
+          echo "--- backup address (should stop working once it's turned off):"
+          curl -sS -o /dev/null -m 30 -w "%{http_code}\n" https://michigan-school-jobs.shloimysicker.workers.dev/ || true
+          exit $fail
