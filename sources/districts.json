@@ -33,5 +33,11 @@
  {"id": "romeo-community-schools", "employer": "Romeo Community Schools", "county": "Macomb", "adapter": "applitrack", "url": "https://www.applitrack.com/romeo/onlineapp/jobpostings/view.asp?all=1&embed=1"},
  {"id": "newaygo-resa", "employer": "Newaygo County RESA", "county": "Newaygo", "adapter": "applitrack", "url": "https://www.applitrack.com/ncresa/onlineapp/jobpostings/view.asp?all=1&embed=1"},
  {"id": "heritage-southwest-isd", "employer": "Heritage Southwest ISD", "county": "Cass", "adapter": "applitrack", "url": "https://www.applitrack.com/lewiscass/onlineapp/jobpostings/view.asp?all=1&embed=1"},
- {"id": "lenawee-isd", "employer": "Lenawee Intermediate School District", "county": "Lenawee", "adapter": "applitrack", "url": "https://www.applitrack.com/lisdus/onlineapp/jobpostings/view.asp?all=1&embed=1"}
+ {"id": "lenawee-isd", "employer": "Lenawee Intermediate School District", "county": "Lenawee", "adapter": "applitrack", "url": "https://www.applitrack.com/lisdus/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "battle-creek-public-schools", "employer": "Battle Creek Public Schools", "county": "Calhoun", "adapter": "applitrack", "url": "https://www.applitrack.com/battlecreek/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "jenison-public-schools", "employer": "Jenison Public Schools", "county": "Ottawa", "adapter": "applitrack", "url": "https://www.applitrack.com/jps/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "reese-public-schools", "employer": "Reese Public Schools", "county": "Tuscola", "adapter": "applitrack", "url": "https://www.applitrack.com/reese/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "vassar-public-schools", "employer": "Vassar Public Schools", "county": "Tuscola", "adapter": "applitrack", "url": "https://www.applitrack.com/vassar/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "kingsley-area-schools", "employer": "Kingsley Area Schools", "county": "Grand Traverse", "adapter": "applitrack", "url": "https://www.applitrack.com/kingsley/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "coopersville-area-public-schools", "employer": "Coopersville Area Public Schools", "county": "Ottawa", "adapter": "applitrack", "url": "https://www.applitrack.com/coopersville/onlineapp/jobpostings/view.asp?all=1&embed=1"}
 ]
