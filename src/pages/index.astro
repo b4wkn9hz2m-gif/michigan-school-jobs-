@@ -6,6 +6,7 @@ import { COUNTIES } from "../config/taxonomy.ts";
 import { jobs, allCategories, countByCategory } from "../lib/jobs.ts";
 
 const byCat = countByCategory();
+const countiesWithJobs = COUNTIES.filter((c) => jobs.some((j) => j.county === c));
 const featured = [...jobs.filter((j) => j.featured), ...jobs.filter((j) => !j.featured)].slice(0, 6);
 const employerCounts = new Map<string, number>();
 for (const j of jobs) employerCounts.set(j.employer, (employerCounts.get(j.employer) ?? 0) + 1);
@@ -41,7 +42,7 @@ const initials = (name: string) =>
         <label class="sr-only" for="hq">Keyword</label>
         <input id="hq" name="q" placeholder="Job title or keyword, e.g. speech, 3rd grade" />
         <label class="sr-only" for="hc">County</label>
-        <select id="hc" name="county"><option value="">All 83 counties</option>{COUNTIES.map((c) => <option value={c}>{c} County</option>)}</select>
+        <select id="hc" name="county"><option value="">All counties</option>{countiesWithJobs.map((c) => <option value={c}>{c} County</option>)}</select>
         <button class="btn btn-green" type="submit"><Icon name="search" class="" />Search</button>
       </form>
     </div>
@@ -60,7 +61,7 @@ const initials = (name: string) =>
   </section>
 
   <section class="band">
-    <h2 class="section-title">Featured Jobs</h2>
+    <h2 class="section-title">{jobs.some((j) => j.featured) ? "Featured Jobs" : "Latest Jobs"}</h2>
     <p class="section-sub">Fresh openings from Michigan schools. New jobs arrive every morning.</p>
     {featured.length > 0 ? (
       <div class="feature-list">{featured.map((job) => <JobCard job={job} compact />)}</div>
