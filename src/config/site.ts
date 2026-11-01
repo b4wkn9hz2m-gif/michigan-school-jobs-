@@ -12,8 +12,8 @@ export const SITE = {
   contactEmail: "hello@michigan-school-jobs.com",
   // Paste Stripe Payment Link URLs here (https://buy.stripe.com/...). Empty = button emails you instead.
   paymentLinks: {
-    featured: "",
-    district: "",
-    agency: "",
+    featured: "https://buy.stripe.com/6oUfZibYL1wi0Mj978gA800",
+    district: "https://buy.stripe.com/aFa3cwaUH8YKcv13MOgA801",
+    agency: "https://buy.stripe.com/5kQbJ20g33EqgLh5UWgA802",
   } as Record<string, string>,
 };
