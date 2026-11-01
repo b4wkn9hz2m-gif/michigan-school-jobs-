@@ -1,0 +1,11 @@
+oakland-view.html 200 32913 text/html https://www.applitrack.com/oaklandschools/onlineapp/jobpostings/view.asp?embed=1
+oakland-all.html 200 5785093 text/html https://www.applitrack.com/oaklandschools/onlineapp/jobpostings/view.asp?all=1&embed=1
+oakland-output.html 200 5764714 text/javascript https://www.applitrack.com/oaklandschools/onlineapp/jobpostings/Output.asp?all=1
+oakland-rss.xml 404 1822 text/html https://www.applitrack.com/oaklandschools/onlineapp/jobpostings/rss.asp
+oakland-rss2.xml 404 1821 text/html https://www.applitrack.com/oaklandschools/onlineapp/jobpostings/rss.asp?all=1
+resa-all.html 200 8646410 text/html https://www.applitrack.com/resa/onlineapp/jobpostings/view.asp?all=1&embed=1
+wisd-all.html 200 8281328 text/html https://www.applitrack.com/wisd/onlineapp/jobpostings/view.asp?all=1&embed=1
+gcaps-all.html 200 1804397 text/html https://www.applitrack.com/gcaps/onlineapp/jobpostings/view.asp?all=1&embed=1
+maisd-all.html 200 291846 text/html https://www.applitrack.com/maisd/onlineapp/jobpostings/view.asp?all=1&embed=1
+ionia-all.html 200 28963 text/html https://www.applitrack.com/ioniacountyisd/onlineapp/jobpostings/view.asp?all=1&embed=1
+robots.txt 200 43 text/plain https://www.applitrack.com/robots.txt
