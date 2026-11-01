@@ -1,5 +1,5 @@
 {
- "ranAt": "2026-11-01T19:00:29.101Z",
+ "ranAt": "2026-11-01T19:11:08.044Z",
  "total": 2216,
  "sources": [
   {
@@ -32,5 +32,13 @@
    "ok": true,
    "count": 0
   }
- ]
+ ],
+ "linkCheck": {
+  "checked": 2216,
+  "failures": 2216,
+  "outage": true,
+  "removed": 0,
+  "stillUnverified": 2216,
+  "removedJobs": []
+ }
 }
