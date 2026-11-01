@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 
-// Set SITE_URL in the deploy environment once a domain is chosen.
+// Canonical domain. SITE_URL can override it (e.g. for a preview deploy).
 export default defineConfig({
-  site: process.env.SITE_URL || "https://example.com",
+  site: process.env.SITE_URL || "https://michigan-school-jobs.com",
   trailingSlash: "ignore",
 });

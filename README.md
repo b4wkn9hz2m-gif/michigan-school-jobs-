@@ -15,7 +15,7 @@ To clone it for another state, edit `src/config/site.ts` and the county list in 
 | Website (`src/`) | Astro static site: home, search with filters, job pages, 83 county pages, category pages, pricing, post-a-job, sitemap | ✅ built, checked on desktop + mobile |
 | `supabase/migrations/0001_accounts.sql` | Phase 2: employer/seeker accounts, direct posts, applications, resumes | ✅ schema + security tested locally, not connected to the site yet |
 
-Hosting: connect the repo to **Cloudflare Pages** (free, commercial use allowed). Build command `npm run build`, output `dist`, env `SITE_URL=https://your-domain`. Each daily data commit triggers a redeploy.
+Hosting: connect the repo to **Cloudflare Pages** (free, commercial use allowed). Build command `npm run build`, output `dist`, then add the custom domain `michigan-school-jobs.com`. Each daily data commit triggers a redeploy.
 
 ## Ideas carried over from the Ohio hub
 - Categories plus county and job-type filters, with "Featured" placement as the paid upgrade
@@ -37,8 +37,9 @@ JOBS_FIXTURE=test/fixtures/jobs.json npm run build   # preview with SYNTHETIC te
 ```
 
 ## Owner checklist before launch
-- [ ] Pick a name/domain and set `contactEmail` in `src/config/site.ts`
+- [x] Domain: michigan-school-jobs.com (contact: hello@michigan-school-jobs.com)
+- [ ] Turn on Cloudflare Email Routing so hello@michigan-school-jobs.com forwards to your inbox
 - [ ] Have a lawyer glance at terms/privacy for an aggregator; honor removal requests within 1 business day
-- [ ] Connect Cloudflare Pages; set `SITE_URL`
+- [ ] Connect Cloudflare Pages and add the custom domain
 - [ ] Submit the sitemap in Google Search Console
 - [ ] Create Stripe Payment Links for the paid plans
