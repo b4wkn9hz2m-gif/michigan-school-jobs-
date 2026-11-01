@@ -1,0 +1,36 @@
+{
+ "ranAt": "2026-11-01T18:23:31.504Z",
+ "total": 2216,
+ "sources": [
+  {
+   "id": "oakland-schools",
+   "ok": true,
+   "count": 905
+  },
+  {
+   "id": "wayne-resa",
+   "ok": true,
+   "count": 701
+  },
+  {
+   "id": "washtenaw-isd",
+   "ok": true,
+   "count": 326
+  },
+  {
+   "id": "mid-michigan-gcaps",
+   "ok": true,
+   "count": 216
+  },
+  {
+   "id": "montcalm-isd",
+   "ok": true,
+   "count": 68
+  },
+  {
+   "id": "ionia-isd",
+   "ok": true,
+   "count": 0
+  }
+ ]
+}
