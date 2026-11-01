@@ -1,1 +1,8 @@
-[]
+[
+ {"id": "oakland-schools", "employer": "Oakland Schools", "county": "Oakland", "adapter": "applitrack", "url": "https://www.applitrack.com/oaklandschools/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "wayne-resa", "employer": "Wayne County Schools Employment Network", "county": "Wayne", "adapter": "applitrack", "url": "https://www.applitrack.com/resa/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "washtenaw-isd", "employer": "Washtenaw Area Schools Application Consortium", "county": "Washtenaw", "adapter": "applitrack", "url": "https://www.applitrack.com/wisd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "mid-michigan-gcaps", "employer": "Mid-Michigan Area Public Schools Consortium", "county": "Genesee", "countyByEmployer": {"Mt. Pleasant Public Schools": "Isabella"}, "adapter": "applitrack", "url": "https://www.applitrack.com/gcaps/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "montcalm-isd", "employer": "Montcalm Area Intermediate School District", "county": "Montcalm", "adapter": "applitrack", "url": "https://www.applitrack.com/maisd/onlineapp/jobpostings/view.asp?all=1&embed=1"},
+ {"id": "ionia-isd", "employer": "Ionia County Application Consortium", "county": "Ionia", "adapter": "applitrack", "url": "https://www.applitrack.com/ioniacountyisd/onlineapp/jobpostings/view.asp?all=1&embed=1"}
+]

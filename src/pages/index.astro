@@ -16,7 +16,7 @@ const employers = new Set(jobs.map((j) => j.employer)).size;
       <h1>Where Michigan schools and great educators find each other.</h1>
       <p class="lead">
         {jobs.length > 0
-          ? `${jobs.length.toLocaleString()} open jobs from ${employers.toLocaleString()} Michigan schools, updated every morning.`
+          ? `${jobs.length.toLocaleString()} open jobs from ${employers.toLocaleString()} Michigan districts and schools, updated every morning.`
           : "Teaching, special education, therapy and support jobs from Michigan schools, updated every morning."}
       </p>
       <form class="search-bar" action="/jobs" method="get" role="search">

@@ -35,5 +35,5 @@ export function formatDate(iso: string) {
 }
 
 export function isNew(job: Job) {
-  return now - Date.parse(job.firstSeenAt) < 3 * 86_400_000;
+  return now - Date.parse(job.postedAt) < 7 * 86_400_000;
 }

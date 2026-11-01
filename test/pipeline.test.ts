@@ -59,3 +59,42 @@ test("merge keeps firstSeenAt, drops closed and expired jobs, and keeps failed s
   assert.deepEqual(titles, ["Aide D", "Teacher A"]);
   assert.equal(result.find((j) => j.title === "Teacher A")!.firstSeenAt, "2026-10-01T00:00:00Z");
 });
+
+import { parseAppliTrack } from "../scripts/adapters/applitrack.ts";
+
+test("parseAppliTrack reads real AppliTrack markup", () => {
+  const html = readFileSync(new URL("./fixtures/applitrack-maisd.html", import.meta.url), "utf8");
+  const src: Source = { id: "montcalm-isd", employer: "Montcalm Area ISD", county: "Montcalm", adapter: "applitrack", url: "https://www.applitrack.com/maisd/onlineapp/jobpostings/view.asp?all=1&embed=1" };
+  const raws = parseAppliTrack(html, src);
+  assert.equal(raws.length, 2);
+  assert.equal(raws[0].title, "Business Manager");
+  assert.equal(raws[0].employer, "Vestaburg Community School");
+  assert.equal(raws[0].postedAt, "2026-09-30T12:00:00-05:00");
+  assert.match(raws[0].applyUrl, /^https:\/\/www\.applitrack\.com\/maisd\/OnlineApp\/JobPostings\/view\.asp\?all=1&AppliTrackJobId=4910_37258&/);
+  assert.match(raws[0].description!, /^Position type: Administration \/ Business Manager\./);
+  const job = normalize(raws[1], src, now)!;
+  assert.equal(job.title, "Special Education Supervisor");
+  assert.equal(job.category, "special-education");
+  assert.equal(job.county, "Montcalm");
+});
+
+test("open-ended postings stay up while listed, and test postings are skipped", () => {
+  const old = normalize({ title: "Kitchen Helper", employer: "", applyUrl: "https://x.org/1", postedAt: "2024-07-11" }, source, now)!;
+  assert.ok(Date.parse(old.expiresAt) > now.getTime());
+  assert.equal(old.deadline, null);
+  assert.equal(normalize({ title: "TEST ONLY - Do not apply.", employer: "", applyUrl: "https://x.org/2" }, source, now), null);
+});
+
+test("new categories: early childhood, clubs, security, excluded coach titles", () => {
+  assert.equal(classify("GSRP Relief Assistant"), "early-childhood");
+  assert.equal(classify("Drama Club Sponsor"), "coaching");
+  assert.equal(classify("Building Security"), "safety-security");
+  assert.equal(classify("Instructional Coach - K-5"), "teaching");
+  assert.equal(classify("District Psychologist"), "therapies");
+});
+
+test("countyByEmployer overrides the source's default county", () => {
+  const src: Source = { ...source, countyByEmployer: { "Mt. Pleasant Public Schools": "Isabella" } };
+  assert.equal(normalize({ title: "Teacher", employer: "Mt. Pleasant Public Schools", applyUrl: "https://x.org/a" }, src, now)!.county, "Isabella");
+  assert.equal(normalize({ title: "Teacher", employer: "Flint Community Schools", applyUrl: "https://x.org/b" }, src, now)!.county, "Kent");
+});

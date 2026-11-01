@@ -13,19 +13,20 @@ export const COUNTIES = [
 export const JOB_TYPES = ["Full Time", "Part Time", "Substitute", "Temporary", "Internship"] as const;
 
 // Order matters: the first category whose keywords match a title wins as the primary category.
-export const CATEGORIES = [
-  { slug: "special-education", name: "Special Education", keywords: ["special ed", "sped", "resource room", "autism", "asd", "cognitively", "emotionally impaired", "learning disab", "inclusion", "iep"] },
-  { slug: "therapies", name: "Therapies & Related Services", keywords: ["speech", "slp", "occupational therap", "physical therap", "school psych", "social worker", "counselor", "nurse", "audiolog", "behavior analyst", "bcba"] },
-  { slug: "administrative", name: "Administration & Office", keywords: ["principal", "superintendent", "director", "coordinator", "secretary", "clerk", "administrative", "payroll", "accountant", "human resources", "receptionist"] },
+export const CATEGORIES: readonly { slug: string; name: string; keywords: readonly string[]; exclude?: readonly string[] }[] = [
+  { slug: "special-education", name: "Special Education", keywords: ["special ed", "sped", "resource room", "autism", "asd", "cognitively", "emotionally impaired", "learning disab", "inclusion", "iep", "deaf", "dhh", "visually impaired", "intervener"] },
+  { slug: "therapies", name: "Therapies & Related Services", keywords: ["speech", "slp", "occupational therap", "physical therap", "psycholog", "social worker", "counselor", "nurse", "audiolog", "behavior analyst", "bcba", "behavior specialist", "behavior support specialist", "interpreter"] },
+  { slug: "early-childhood", name: "Early Childhood & Child Care", keywords: ["preschool", "pre-k", "prek", "gsrp", "head start", "early childhood", "child care", "childcare", "latchkey", "aftercare", "before and after school", "kids club", "prime time care", "caregiver", "daycare"] },
+  { slug: "administrative", name: "Administration & Office", keywords: ["principal", "superintendent", "director", "coordinator", "supervisor", "manager", "chief", "dean", "secretary", "clerk", "administrative", "payroll", "accountant", "bookkeeper", "human resources", "receptionist", "registrar", "analyst"] },
   { slug: "transportation", name: "Transportation", keywords: ["bus driver", "bus aide", "transportation", "mechanic", "driver"] },
-  { slug: "maintenance", name: "Maintenance & Custodial", keywords: ["custodian", "custodial", "maintenance", "groundskeeper", "facilities", "hvac", "electrician", "plumber"] },
-  { slug: "food-service", name: "Food Service", keywords: ["food service", "cook", "cafeteria", "nutrition", "lunch"] },
-  { slug: "paraprofessional", name: "Paraprofessionals & Aides", keywords: ["paraprofessional", "parapro", "para ", "aide", "instructional assistant", "teacher assistant", "interventionist"] },
-  { slug: "coaching", name: "Coaching & Athletics", keywords: ["coach", "athletic"] },
-  { slug: "teaching", name: "Teaching", keywords: ["teacher", "instructor", "educator", "kindergarten", "grade", "math", "science", "english", "ela", "social studies", "music", "art ", "spanish", "librarian", "media specialist"] },
+  { slug: "maintenance", name: "Maintenance & Custodial", keywords: ["custodian", "custodial", "maintenance", "groundskeeper", "grounds", "facilities", "hvac", "electrician", "plumber", "building helper"] },
+  { slug: "safety-security", name: "Security & Safety", keywords: ["security", "hall monitor", "crossing guard", "safety", "resource officer"] },
+  { slug: "food-service", name: "Food Service", keywords: ["food service", "cook", "cafeteria", "nutrition", "lunch", "kitchen", "cashier"] },
+  { slug: "paraprofessional", name: "Paraprofessionals & Aides", keywords: ["paraprofessional", "parapro", "para ", "aide", "instructional assistant", "teacher assistant", "interventionist", "tutor", "noon"] },
+  { slug: "coaching", name: "Coaching, Clubs & Activities", keywords: ["coach", "athletic", "club sponsor", "sponsor", "advisor", "referee", "lifeguard", "life guard"], exclude: ["instructional coach", "literacy coach", "math coach", "academic coach", "reading coach"] },
+  { slug: "teaching", name: "Teaching", keywords: ["teacher", "instructor", "educator", "kindergarten", "grade", "math", "science", "english", "ela", "social studies", "music", "art ", "spanish", "librarian", "media specialist", "instructional coach", "literacy coach", "math coach", "academic coach", "reading coach", "literacy", "language arts", "teaching"] },
 ] as const;
 
-export type CategorySlug = (typeof CATEGORIES)[number]["slug"];
 export const OTHER_CATEGORY = { slug: "other", name: "Other School Jobs" } as const;
 
 export function slugify(s: string): string {

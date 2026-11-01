@@ -23,6 +23,8 @@ export type Source = {
   website?: string;
   adapter: "jsonld" | "applitrack";
   url: string;
+  // For consortium boards that span counties: employer name -> county.
+  countyByEmployer?: Record<string, string>;
 };
 
 export type Job = {
@@ -36,6 +38,8 @@ export type Job = {
   category: string;
   postedAt: string;
   expiresAt: string;
+  // Real closing date published by the employer, if any (expiresAt may be a rolling refresh date).
+  deadline: string | null;
   firstSeenAt: string;
   lastSeenAt: string;
   applyUrl: string;
@@ -51,10 +55,9 @@ const DAY = 86_400_000;
 
 export function classify(title: string, description = ""): string {
   const hay = ` ${title.toLowerCase()} `;
-  for (const c of CATEGORIES) if (c.keywords.some((k) => hay.includes(k))) return c.slug;
-  const body = ` ${description.toLowerCase().slice(0, 600)} `;
-  for (const c of CATEGORIES) if (c.keywords.some((k) => body.includes(k))) return c.slug;
-  return "other";
+  const match = (text: string) =>
+    CATEGORIES.find((c) => c.keywords.some((k) => text.includes(k)) && !c.exclude?.some((x) => text.includes(x)))?.slug;
+  return match(hay) ?? match(` ${description.toLowerCase().slice(0, 600)} `) ?? "other";
 }
 
 export function inferType(title: string, employmentType = ""): Job["type"] {
@@ -99,22 +102,27 @@ export function jobId(employer: string, title: string, applyUrl: string): string
 export function normalize(raw: RawPosting, source: Source, now: Date): Job | null {
   const title = stripHtml(raw.title);
   if (!title || !/^https?:\/\//.test(raw.applyUrl)) return null;
+  if (/\b(test only|do not apply|test posting)\b/i.test(title)) return null;
   const employer = stripHtml(raw.employer) || source.employer;
   const text = stripHtml(raw.description);
   const postedAt = validDate(raw.postedAt) ?? now.toISOString();
-  const expiresAt = validDate(raw.expiresAt) ?? new Date(Date.parse(postedAt) + LISTING_DAYS * DAY).toISOString();
+  // Sources list only open jobs, so with no explicit closing date a job stays up while the source
+  // keeps listing it (each run pushes this forward); merge() drops it once the source stops listing it.
+  const deadline = validDate(raw.expiresAt);
+  const expiresAt = deadline ?? new Date(now.getTime() + LISTING_DAYS * DAY).toISOString();
   const id = jobId(employer, title, raw.applyUrl);
   return {
     id,
     slug: `${slugify(title).slice(0, 60)}-${id}`,
     title,
     employer,
-    county: normalizeCounty(raw.county) ?? source.county,
+    county: normalizeCounty(raw.county) ?? normalizeCounty(source.countyByEmployer?.[employer]) ?? source.county,
     city: raw.city?.trim() || source.city || "",
     type: inferType(title, raw.employmentType),
     category: classify(title, text),
     postedAt,
     expiresAt,
+    deadline,
     firstSeenAt: now.toISOString(),
     lastSeenAt: now.toISOString(),
     applyUrl: raw.applyUrl,
