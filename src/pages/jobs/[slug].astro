@@ -10,6 +10,10 @@ export function getStaticPaths() {
   return jobs.map((job) => ({ params: { slug: job.slug }, props: { job } }));
 }
 const { job } = Astro.props as { job: Job };
+const SITE_URL = `https://${SITE.domain}`;
+// Many near-identical postings share a title at one employer; the school or building tells them apart.
+const place = (job.excerpt.match(/Location:\s*([^.]+)\./)?.[1] ?? "").trim();
+const where = !place ? job.employer : place.toLowerCase().includes(job.employer.toLowerCase()) ? place : place.toLowerCase() === job.employer.toLowerCase() ? job.employer : `${place}, ${job.employer}`;
 const related = jobs.filter((j) => j.id !== job.id && j.county === job.county && j.category === job.category).slice(0, 4);
 const jsonLd = {
   "@context": "https://schema.org",
@@ -17,14 +21,17 @@ const jsonLd = {
   title: job.title,
   description: job.excerpt || job.title,
   datePosted: job.postedAt,
-  validThrough: job.deadline ?? undefined,
+  validThrough: job.deadline ?? job.expiresAt,
+  directApply: false,
+  identifier: { "@type": "PropertyValue", name: job.employer, value: job.id },
   employmentType: { "Full Time": "FULL_TIME", "Part Time": "PART_TIME", Substitute: "PER_DIEM", Temporary: "TEMPORARY", Internship: "INTERN" }[job.type],
   hiringOrganization: { "@type": "Organization", name: job.employer },
-  jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: job.city || undefined, addressRegion: SITE.stateCode, addressCountry: "US" } },
-  url: job.applyUrl,
+  jobLocation: { "@type": "Place", name: `${job.county} County, ${SITE.state}`, address: { "@type": "PostalAddress", addressLocality: job.city || undefined, addressRegion: SITE.stateCode, addressCountry: "US" } },
+  url: new URL(`/jobs/${job.slug}`, SITE_URL).href,
+  sameAs: job.applyUrl,
 };
 ---
-<Base title={`${job.title} — ${job.employer}`} description={`${job.title} at ${job.employer} in ${job.county} County, ${SITE.state}. ${job.type}. Apply on the employer's official site.`} jsonLd={jsonLd}>
+<Base title={`${job.title} — ${where}`} description={`${job.title} at ${job.employer} in ${job.county} County, ${SITE.state}. ${job.type}. Apply on the employer's official site.`} jsonLd={jsonLd}>
   <section class="page-hero"><div>
     <a class="back-link" href="/jobs" id="back"><Icon name="back" />Back to results</a>
     <div class="crumbs"><a href="/jobs">Positions</a> › <a href={`/counties/${countySlug(job.county)}`}>{job.county} County</a> › <a href={`/categories/${job.category}`}>{categoryName(job.category)}</a></div>
