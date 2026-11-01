@@ -44,5 +44,5 @@ export const PLANS = [
   { id: "free", name: "Free", price: "$0", cadence: "forever", features: ["Your district's public jobs listed automatically", "Post jobs directly (reviewed within 1 business day)", "Organization details remembered for every post", "Listings stay up while the job is open"] },
   { id: "featured", name: "Featured Post", price: "$59", cadence: "per post", popular: true, features: ["Pinned to the top of search for 30 days", "Featured badge and highlighted card", "Shown in Featured Jobs on the home page", "soon:Highlighted in the weekly newsletter"] },
   { id: "district", name: "District Pro", price: "$99", cadence: "per month", features: ["3 featured posts every month", "Priority support", "soon:Employer dashboard & applicant inbox"] },
-  { id: "agency", name: "Agency", price: "$249", cadence: "per month", features: ["For staffing agencies & contractors", "Posts across all 83 counties", "5 featured posts every month", "soon:Agency profile page", "soon:Searchable candidate resumes"] },
+  { id: "agency", name: "Agency", price: "$249", cadence: "per month", features: ["For staffing agencies & contractors", "Posts in every county we cover", "5 featured posts every month", "soon:Agency profile page", "soon:Searchable candidate resumes"] },
 ] as const;
