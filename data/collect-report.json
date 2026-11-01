@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T19:18:02.701Z",
- "total": 2216,
+ "ranAt": "2026-11-01T21:33:25.020Z",
+ "total": 2621,
  "sources": [
   {
    "id": "oakland-schools",
@@ -31,10 +31,95 @@
    "id": "ionia-isd",
    "ok": true,
    "count": 0
+  },
+  {
+   "id": "monroe-county-consortium",
+   "ok": true,
+   "count": 132
+  },
+  {
+   "id": "saginaw-consortium",
+   "ok": true,
+   "count": 91
+  },
+  {
+   "id": "eup-consortium",
+   "ok": true,
+   "count": 65
+  },
+  {
+   "id": "rockford-public-schools",
+   "ok": true,
+   "count": 35
+  },
+  {
+   "id": "kentwood-public-schools",
+   "ok": true,
+   "count": 11
+  },
+  {
+   "id": "manistee-isd",
+   "ok": true,
+   "count": 17
+  },
+  {
+   "id": "kalamazoo-resa",
+   "ok": true,
+   "count": 2
+  },
+  {
+   "id": "kalamazoo-consortium",
+   "ok": true,
+   "count": 2
+  },
+  {
+   "id": "ingham-consortium",
+   "ok": true,
+   "count": 1
+  },
+  {
+   "id": "cope-esd",
+   "ok": true,
+   "count": 1
+  },
+  {
+   "id": "allegan-consortium",
+   "ok": true,
+   "count": 8
+  },
+  {
+   "id": "charlevoix-emmet-isd",
+   "ok": true,
+   "count": 11
+  },
+  {
+   "id": "st-clair-resa",
+   "ok": true,
+   "count": 19
+  },
+  {
+   "id": "lapeer-isd",
+   "ok": true,
+   "count": 10
+  },
+  {
+   "id": "muskegon-consortium",
+   "ok": true,
+   "count": 0
+  },
+  {
+   "id": "calhoun-isd",
+   "ok": true,
+   "count": 0
+  },
+  {
+   "id": "alpena-montmorency-alcona-esd",
+   "ok": true,
+   "count": 0
   }
  ],
  "linkCheck": {
-  "checked": 162,
+  "checked": 405,
   "failures": 0,
   "outage": false,
   "removed": 0,
