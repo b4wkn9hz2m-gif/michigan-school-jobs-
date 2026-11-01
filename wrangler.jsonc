@@ -1,7 +1,5 @@
 // Lets Cloudflare's Workers "Import a repository" flow serve the built site.
 // (Cloudflare Pages ignores this file; there, set build output directory to `dist`.)
-// The custom domain (michigan-school-jobs.com) is attached in the Cloudflare dashboard:
-// Workers & Pages -> michigan-school-jobs -> Settings -> Domains & Routes -> Add -> Custom domain.
 {
   "name": "michigan-school-jobs",
   "compatibility_date": "2026-06-01",
@@ -10,5 +8,9 @@
     "not_found_handling": "404-page"
   },
   // Keep the workers.dev address on until the custom domain is confirmed working.
-  "workers_dev": true
+  "workers_dev": true,
+  // Serve the site on the real domain (the zone is in the same Cloudflare account).
+  "routes": [
+    { "pattern": "michigan-school-jobs.com", "custom_domain": true }
+  ]
 }
