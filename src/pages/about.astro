@@ -2,12 +2,14 @@
 import Base from "../layouts/Base.astro";
 import { SITE } from "../config/site.ts";
 ---
-<Base title="About" description={`Why ${SITE.name} exists and how listings work.`}>
-  <div class="wrap page prose" style="max-width:760px">
-    <h1>About {SITE.name}</h1>
-    <p>Michigan has hundreds of school districts and charter schools, and most post openings only on their own websites. Job seekers end up checking dozens of pages, and schools miss great candidates.</p>
-    <p>{SITE.name} gathers those openings into one free, searchable site, by county and by role, and refreshes it every morning. Every listing links straight to the employer's official application.</p>
-    <h2 style="font-size:1.2rem">For schools</h2>
-    <p>Your public openings may already be listed. If anything looks wrong, or you'd like a listing removed or featured, <a href="/contact">contact us</a> and we'll fix it within one business day.</p>
-  </div>
+<Base title="About Us" description={`Why ${SITE.name} exists and how listings work.`}>
+  <section class="page-hero"><div><h1>About Us</h1><p>Helping Michigan schools and great people find each other.</p></div></section>
+  <div class="page"><div class="wrap" style="max-width:820px">
+    <div class="panel prose">
+      <p>Michigan has hundreds of school districts and charter schools, and most post openings only on their own hiring pages. Job seekers end up checking dozens of sites, and schools miss great candidates.</p>
+      <p>{SITE.name} gathers those openings into one free, friendly place, searchable by county and by role, and refreshes it every morning. Every listing links straight to the employer's official application. We never charge job seekers.</p>
+      <h2 style="font-size:20px;font-weight:600">For schools</h2>
+      <p>Your public openings may already be listed. If anything looks wrong, or you'd like a listing removed or featured, <a href="/contact">contact us</a> and we'll take care of it within one business day.</p>
+    </div>
+  </div></div>
 </Base>

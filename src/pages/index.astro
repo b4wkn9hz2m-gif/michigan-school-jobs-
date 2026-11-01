@@ -1,75 +1,100 @@
 ---
 import Base from "../layouts/Base.astro";
 import JobCard from "../components/JobCard.astro";
-import { SITE } from "../config/site.ts";
+import Icon from "../components/Icon.astro";
 import { COUNTIES } from "../config/taxonomy.ts";
-import { jobs, allCategories, countByCategory, countByCounty, countySlug } from "../lib/jobs.ts";
+import { jobs, allCategories, countByCategory } from "../lib/jobs.ts";
+
 const byCat = countByCategory();
-const topCounties = [...countByCounty().entries()].filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 12);
-const latest = jobs.slice(0, 8);
-const employers = new Set(jobs.map((j) => j.employer)).size;
+const featured = [...jobs.filter((j) => j.featured), ...jobs.filter((j) => !j.featured)].slice(0, 6);
+const employerCounts = new Map<string, number>();
+for (const j of jobs) employerCounts.set(j.employer, (employerCounts.get(j.employer) ?? 0) + 1);
+const topDistricts = [...employerCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+const initials = (name: string) =>
+  name.replace(/\b(public|community|schools?|school district|district|consolidated|area|the|of|city)\b/gi, "").trim()
+    .split(/[\s-]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || name[0];
 ---
 <Base>
   <section class="hero">
-    <div class="wrap">
-      <span class="badge-free">100% free for job seekers</span>
-      <h1>Where Michigan schools and great educators find each other.</h1>
-      <p class="lead">
-        {jobs.length > 0
-          ? `${jobs.length.toLocaleString()} open jobs from ${employers.toLocaleString()} Michigan districts and schools, updated every morning.`
-          : "Teaching, special education, therapy and support jobs from Michigan schools, updated every morning."}
-      </p>
-      <form class="search-bar" action="/jobs" method="get" role="search">
-        <input name="q" placeholder="Job title or keyword (e.g. speech, 3rd grade)" aria-label="Keyword" />
-        <select name="county" aria-label="County">
-          <option value="">All 83 counties</option>
-          {COUNTIES.map((c) => <option value={c}>{c} County</option>)}
-        </select>
-        <button class="btn" type="submit">Search jobs</button>
-      </form>
-      <div class="cta-row">
-        <a class="btn secondary" href="/post-a-job">Hiring? Post a job</a>
+    <img class="bg" src="/hero.svg" alt="" />
+    <div class="shade"></div>
+    <div class="inner">
+      <h1>This is where Michigan's schools and the people who make them great find each other.</h1>
+      {jobs.length > 0 && <p class="sub">{jobs.length.toLocaleString()} open jobs from {employerCounts.size} districts and schools, updated every morning.</p>}
+      <div class="hero-ctas">
+        <div class="group">
+          <p>Looking for great staff?</p>
+          <a class="btn btn-white" href="/post-a-job">Post a job</a>
+        </div>
+        <div class="group">
+          <p>Looking for your next great role?</p>
+          <div class="free-note">
+            <a class="btn btn-green" href="/jobs">Find jobs</a>
+            <div class="note" aria-hidden="true">
+              <span>100% Free</span>
+              <svg viewBox="0 0 34 38" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 34C14 32 24 22 26 6"/><path d="M19 11l7-6 4 8"/></svg>
+            </div>
+          </div>
+        </div>
       </div>
+      <form class="hero-search" action="/jobs" method="get" role="search">
+        <label class="sr-only" for="hq">Keyword</label>
+        <input id="hq" name="q" placeholder="Job title or keyword, e.g. speech, 3rd grade" />
+        <label class="sr-only" for="hc">County</label>
+        <select id="hc" name="county"><option value="">All 83 counties</option>{COUNTIES.map((c) => <option value={c}>{c} County</option>)}</select>
+        <button class="btn btn-green" type="submit"><Icon name="search" class="" />Search</button>
+      </form>
     </div>
   </section>
 
-  <section class="block">
-    <div class="wrap">
-      <h2>Positions by category</h2>
-      <div class="grid">
-        {allCategories.map((c) => (
-          <a class="tile" href={`/categories/${c.slug}`}>
-            <strong>{c.name}</strong>
-            <span>{byCat.get(c.slug) ?? 0} open {byCat.get(c.slug) === 1 ? "job" : "jobs"}</span>
+  <section class="cats">
+    <h2 class="section-title">Positions by category</h2>
+    <div class="cat-grid">
+      {allCategories.filter((c) => c.slug !== "other").map((c) => (
+        <a class="cat" href={`/categories/${c.slug}`}>
+          <span>{c.name}<small>{byCat.get(c.slug) ?? 0} open {byCat.get(c.slug) === 1 ? "job" : "jobs"}</small></span>
+          <Icon name="arrow" />
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="band">
+    <h2 class="section-title">Featured Jobs</h2>
+    <p class="section-sub">Fresh openings from Michigan schools. New jobs arrive every morning.</p>
+    {featured.length > 0 ? (
+      <div class="feature-list">{featured.map((job) => <JobCard job={job} compact />)}</div>
+    ) : (
+      <div class="feature-list"><div class="job" style="justify-content:center;text-align:center;flex-direction:column">
+        <strong>New listings are on the way.</strong><span style="color:var(--muted)">Be the first school to post a job. It's free.</span>
+        <a class="btn btn-green" href="/post-a-job">Post a job</a>
+      </div></div>
+    )}
+    {jobs.length > featured.length && <div class="more"><a class="btn btn-white" href="/jobs">See all {jobs.length.toLocaleString()} jobs</a></div>}
+  </section>
+
+  {topDistricts.length > 0 && (
+    <section class="districts">
+      <h2 class="section-title">Featured Michigan School Districts</h2>
+      <p class="section-sub">Districts with the most open positions right now.</p>
+      <div class="district-grid">
+        {topDistricts.map(([name, n]) => (
+          <a class="district" href={`/jobs?q=${encodeURIComponent(name)}`}>
+            <span class="seal" aria-hidden="true">{initials(name)}</span>
+            <span>{name}<br /><small>{n} open jobs</small></span>
           </a>
         ))}
       </div>
-    </div>
-  </section>
-
-  <section class="block" style="padding-top:0">
-    <div class="wrap">
-      <h2>Latest jobs</h2>
-      {latest.length > 0 ? (
-        <div class="job-list">{latest.map((job) => <JobCard job={job} />)}</div>
-      ) : (
-        <div class="panel empty">New listings are on the way. The first districts are being added now.</div>
-      )}
-      {latest.length > 0 && <p style="margin-top:20px"><a class="btn dark" href="/jobs">See all {jobs.length.toLocaleString()} jobs</a></p>}
-    </div>
-  </section>
-
-  {topCounties.length > 0 && (
-    <section class="block" style="padding-top:0">
-      <div class="wrap">
-        <h2>Most openings by county</h2>
-        <div class="grid">
-          {topCounties.map(([c, n]) => (
-            <a class="tile" href={`/counties/${countySlug(c)}`}><strong>{c} County</strong><span>{n} open jobs</span></a>
-          ))}
-        </div>
-        <p style="margin-top:16px"><a href="/counties">Browse all 83 counties →</a></p>
-      </div>
     </section>
   )}
+
+  <section class="closing">
+    <img class="bg" src="/hero.svg" alt="" />
+    <div class="shade"></div>
+    <h2>You know what you're looking for.<br />Let's find it together.</h2>
+    <div class="row">
+      <a class="btn btn-white" href="/post-a-job">Post a job</a>
+      <a class="btn btn-green" href="/jobs">Browse all jobs</a>
+    </div>
+  </section>
 </Base>

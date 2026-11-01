@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import JobCard from "../../components/JobCard.astro";
+import Icon from "../../components/Icon.astro";
 import { SITE } from "../../config/site.ts";
 import { categoryName } from "../../config/taxonomy.ts";
 import { jobs, formatDate, countySlug, type Job } from "../../lib/jobs.ts";
@@ -24,34 +25,36 @@ const jsonLd = {
 };
 ---
 <Base title={`${job.title} — ${job.employer}`} description={`${job.title} at ${job.employer} in ${job.county} County, ${SITE.state}. ${job.type}. Apply on the employer's official site.`} jsonLd={jsonLd}>
-  <div class="wrap page">
-    <div class="crumbs"><a href="/jobs">Jobs</a> › <a href={`/counties/${countySlug(job.county)}`}>{job.county} County</a> › <a href={`/categories/${job.category}`}>{categoryName(job.category)}</a></div>
-    <div class="detail">
+  <section class="page-hero"><div>
+    <div class="crumbs"><a href="/jobs">Positions</a> › <a href={`/counties/${countySlug(job.county)}`}>{job.county} County</a> › <a href={`/categories/${job.category}`}>{categoryName(job.category)}</a></div>
+    <h1 style="font-size:clamp(28px,4vw,44px)">{job.title}</h1>
+    <p>{job.employer}</p>
+  </div></section>
+  <div class="page">
+    <div class="wrap detail">
       <div class="panel">
-        <h1>{job.title}</h1>
-        <div class="meta" style="margin-bottom:16px">
-          <span>{job.employer}</span>
-          <span>{job.city ? `${job.city}, ` : ""}{job.county} County</span>
-          <span>{job.type}</span>
-          <span>Posted {formatDate(job.postedAt)}</span>
+        <div class="facts">
+          <div><Icon name="building" /><span>{job.employer}</span></div>
+          <div><Icon name="pin" /><span>{job.city ? `${job.city}, ` : ""}{job.county} County, Michigan</span></div>
+          <div><Icon name="briefcase" /><span>{job.type} · {categoryName(job.category)}</span></div>
+          <div><Icon name="calendar" /><span>Posted {formatDate(job.postedAt)}{job.deadline ? ` · Applications close ${formatDate(job.deadline)}` : ""}</span></div>
         </div>
-        <span class="pill">{categoryName(job.category)}</span>
-        <div class="prose" style="margin-top:20px">
-          {job.excerpt ? <p>{job.excerpt}</p> : <p>Full details, requirements and salary are on the employer's posting.</p>}
-          {job.deadline && <p>Applications close {formatDate(job.deadline)}.</p>}
+        <div class="prose" style="margin-top:24px;border-top:1px solid var(--line);padding-top:20px">
+          {job.excerpt ? <p>{job.excerpt}</p> : null}
+          <p>Full details, requirements and salary are on the employer's official posting.</p>
         </div>
       </div>
-      <aside class="panel">
+      <aside class="panel" style="position:sticky;top:88px">
         <!-- One clear apply action (a lesson from the Ohio hub). -->
-        <a class="btn" style="width:100%" href={job.applyUrl} rel="noopener nofollow" target="_blank">Apply for this job ↗</a>
-        <p style="color:var(--muted);font-size:0.88rem;margin:12px 0 0">You'll apply directly with {job.employer} on their official application site. {SITE.name} never charges job seekers.</p>
+        <a class="btn btn-green" style="width:100%" href={job.applyUrl} rel="noopener nofollow" target="_blank">Apply for Job <Icon name="external" class="" /></a>
+        <p style="color:var(--muted);font-size:14px;margin:14px 0 0">You'll apply directly with {job.employer} on their official application site. {SITE.name} is always free for job seekers.</p>
       </aside>
     </div>
     {related.length > 0 && (
-      <section style="margin-top:40px">
-        <h2 style="font-size:1.25rem">Similar jobs in {job.county} County</h2>
-        <div class="job-list">{related.map((j) => <JobCard job={j} />)}</div>
-      </section>
+      <div class="wrap" style="margin-top:56px">
+        <h2 style="font-size:24px;font-weight:500;margin:0 0 18px">Similar jobs in {job.county} County</h2>
+        <div class="results">{related.map((j) => <JobCard job={j} />)}</div>
+      </div>
     )}
   </div>
 </Base>

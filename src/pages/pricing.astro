@@ -3,21 +3,22 @@ import Base from "../layouts/Base.astro";
 import { PLANS } from "../config/taxonomy.ts";
 import { SITE } from "../config/site.ts";
 ---
-<Base title="Pricing for schools and agencies" description="List your school's jobs free. Upgrade for featured placement, unlimited posts, or agency access.">
-  <div class="wrap page">
-    <h1>Simple pricing for employers</h1>
-    <p style="color:var(--muted);margin:0 0 28px;max-width:640px">Public school districts and charter schools are listed free, automatically. Paid plans add visibility and tools. Job seekers never pay.</p>
+<Base title="Plans & Pricing" description="List your school's jobs free. Upgrade for featured placement or agency access.">
+  <section class="page-hero"><div><h1>Plans &amp; Pricing</h1><p>Michigan districts and charter schools are listed free. Paid plans add visibility. Job seekers never pay.</p></div></section>
+  <div class="page"><div class="wrap">
     <div class="plans">
       {PLANS.map((p) => (
-        <div class="plan">
-          <strong>{p.name}</strong>
-          <div class="price">{p.price}<span style="font-size:0.95rem;font-weight:500;color:var(--muted)"> {p.cadence}</span></div>
-          <ul>{p.features.map((f) => <li>{f}</li>)}</ul>
-          <a class="btn dark" href={p.id === "free" ? "/post-a-job" : `mailto:${SITE.contactEmail}?subject=${encodeURIComponent(`${p.name} plan — ${SITE.name}`)}`}>
+        <div class:list={["plan", { popular: "popular" in p && p.popular }]}>
+          {"popular" in p && p.popular && <span class="tag green" style="align-self:flex-start">Most popular</span>}
+          <span class="name">{p.name}</span>
+          <span class="price">{p.price} <span>{p.cadence}</span></span>
+          <ul>{p.features.map((f) => f.startsWith("soon:") ? <li class="soon">{f.slice(5)} (coming soon)</li> : <li>{f}</li>)}</ul>
+          <a class:list={["btn", p.id === "free" ? "btn-ghost-green" : "btn-green"]} href={p.id === "free" ? "/post-a-job" : `mailto:${SITE.contactEmail}?subject=${encodeURIComponent(`${p.name} plan: ${SITE.name}`)}`}>
             {p.id === "free" ? "Post a job" : "Get started"}
           </a>
         </div>
       ))}
     </div>
-  </div>
+    <p style="text-align:center;color:var(--muted);margin-top:28px">Questions? Email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a> and we'll get back to you within one business day.</p>
+  </div></div>
 </Base>

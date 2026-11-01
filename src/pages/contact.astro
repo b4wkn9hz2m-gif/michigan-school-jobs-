@@ -3,11 +3,12 @@ import Base from "../layouts/Base.astro";
 import { SITE } from "../config/site.ts";
 ---
 <Base title="Contact" description={`Contact ${SITE.name}.`}>
-  <div class="wrap page" style="max-width:760px">
-    <h1>Contact us</h1>
+  <section class="page-hero"><div><h1>Contact Us</h1><p>We'd love to hear from you.</p></div></section>
+  <div class="page"><div class="wrap" style="max-width:820px">
     <div class="panel prose">
       <p>Questions, corrections, listing removals, or advertising: email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.</p>
-      <p>Schools: tell us your district name and the listing link, and we'll update or remove it within one business day.</p>
+      <p>Schools: send us your district name and the listing link, and we'll update or remove it within one business day.</p>
+      <p><a class="btn btn-green" href={`mailto:${SITE.contactEmail}`}>Email us</a></p>
     </div>
-  </div>
+  </div></div>
 </Base>

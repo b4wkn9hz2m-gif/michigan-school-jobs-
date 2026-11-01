@@ -12,28 +12,31 @@ const catNames = Object.fromEntries(allCategories.map((c) => [c.slug, c.name]));
 const INITIAL = 40;
 ---
 <Base title="Search Michigan school jobs" description="Filter every Michigan school job by county, category and job type.">
-  <div class="wrap layout-search">
-    <form class="filters" id="filters" role="search" aria-label="Filter jobs">
-      <label>Keyword<input name="q" type="search" placeholder="Title, district, keyword" /></label>
-      <label>County
-        <select name="county"><option value="">All counties</option>{COUNTIES.map((c) => <option value={c}>{c}</option>)}</select>
-      </label>
-      <label>Category
-        <select name="category"><option value="">All categories</option>{allCategories.map((c) => <option value={c.slug}>{c.name}</option>)}</select>
-      </label>
-      <label>Job type
-        <select name="type"><option value="">All types</option>{JOB_TYPES.map((t) => <option value={t}>{t}</option>)}</select>
-      </label>
-      <button type="reset" class="btn dark">Clear filters</button>
-    </form>
-    <div>
-      <h1 style="margin:0 0 8px;font-size:1.6rem">Michigan school jobs</h1>
-      <p class="result-count" id="count" aria-live="polite">{jobs.length.toLocaleString()} open jobs</p>
-      <div class="job-list" id="results">
-        {jobs.slice(0, INITIAL).map((job) => <JobCard job={job} />)}
+  <section class="page-hero"><div><h1>Positions</h1><p>Every open job from Michigan schools, updated every morning.</p></div></section>
+  <div class="page">
+    <div class="wrap layout-search">
+      <div>
+        <p class="result-count" id="count" aria-live="polite">{jobs.length.toLocaleString()} open jobs</p>
+        <div class="results" id="results">
+          {jobs.slice(0, INITIAL).map((job) => <JobCard job={job} />)}
+        </div>
+        {jobs.length === 0 && <div class="panel empty">No jobs listed yet. Check back tomorrow morning.</div>}
+        <p style="text-align:center;margin-top:28px"><button class="btn btn-green" id="more" type="button" hidden>Show more jobs</button></p>
       </div>
-      {jobs.length === 0 && <div class="panel empty">No jobs listed yet. Check back tomorrow morning.</div>}
-      <p><button class="btn dark" id="more" type="button" hidden>Show more</button></p>
+      <form class="filters" id="filters" role="search" aria-label="Filter jobs">
+        <h2>Search jobs</h2>
+        <label>Keyword<input name="q" type="search" placeholder="Title, district, keyword" /></label>
+        <label>County
+          <select name="county"><option value="">All counties</option>{COUNTIES.map((c) => <option value={c}>{c}</option>)}</select>
+        </label>
+        <label>Category
+          <select name="category"><option value="">All categories</option>{allCategories.map((c) => <option value={c.slug}>{c.name}</option>)}</select>
+        </label>
+        <label>Job type
+          <select name="type"><option value="">All types</option>{JOB_TYPES.map((t) => <option value={t}>{t}</option>)}</select>
+        </label>
+        <button type="reset" class="btn btn-ghost-green">Clear filters</button>
+      </form>
     </div>
   </div>
   <script is:inline id="job-index" type="application/json" set:html={JSON.stringify({ jobs: index, cats: catNames })} />
@@ -49,12 +52,14 @@ const INITIAL = 40;
     let matches: J[] = jobs;
 
     const esc = (s: string) => s.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]!);
+    const ICON = { b: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13M9 21v-5h6v5M8 11h.01M12 11h.01M16 11h.01"/></svg>', c: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>', w: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>' };
+    const slug = (c: string) => c.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const card = (j: J) => `
-      <article class="job${j.f ? " featured" : ""}"><div>
-        <h3><a href="/jobs/${j.s}">${esc(j.t)}</a></h3>
-        <div class="meta"><span>${esc(j.e)}</span><span>${j.ci ? esc(j.ci) + ", " : ""}${esc(j.c)} County</span><span>${esc(j.ty)}</span><span>Posted ${esc(j.p)}</span></div>
-        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill">${esc(cats[j.ca] ?? "Other")}</span>${j.f ? '<span class="pill amber">Featured</span>' : ""}</div>
-      </div><a class="btn dark" href="/jobs/${j.s}">View Job</a></article>`;
+      <article class="job${j.f ? " featured" : ""}"><div style="min-width:0">
+        <h3 class="title"><a href="/jobs/${j.s}">${esc(j.t)}</a></h3>
+        <div class="meta"><span class="item">${ICON.b}${esc(j.e)}</span><span class="item">${ICON.c}${esc(j.p)}</span><span class="item">${ICON.w}${esc(j.ty)}</span></div>
+        <div class="tags"><span class="tag">${esc(cats[j.ca] ?? "Other")}</span>${j.f ? '<span class="tag green">Featured</span>' : ""}</div>
+      </div><div class="side"><a class="county" href="/counties/${slug(j.c)}">${esc(j.c)} County</a><a class="btn btn-ghost-green" href="/jobs/${j.s}">View Job</a></div></article>`;
 
     function render() {
       results.innerHTML = matches.length

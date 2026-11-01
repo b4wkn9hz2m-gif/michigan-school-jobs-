@@ -1,24 +1,29 @@
 ---
 import type { Job } from "../lib/jobs.ts";
-import { formatDate, isNew } from "../lib/jobs.ts";
+import { formatDate, isNew, countySlug } from "../lib/jobs.ts";
 import { categoryName } from "../config/taxonomy.ts";
-interface Props { job: Job }
-const { job } = Astro.props;
+import Icon from "./Icon.astro";
+interface Props { job: Job; compact?: boolean }
+const { job, compact = false } = Astro.props;
 ---
 <article class:list={["job", { featured: job.featured }]}>
-  <div>
-    <h3><a href={`/jobs/${job.slug}`}>{job.title}</a></h3>
+  <div style="min-width:0">
+    <h3 class="title"><a href={`/jobs/${job.slug}`}>{job.title}</a></h3>
     <div class="meta">
-      <span>{job.employer}</span>
-      <span>{job.city ? `${job.city}, ` : ""}{job.county} County</span>
-      <span>{job.type}</span>
-      <span>Posted {formatDate(job.postedAt)}</span>
+      <span class="item"><Icon name="building" />{job.employer}</span>
+      <span class="item"><Icon name="calendar" />{formatDate(job.postedAt)}</span>
+      {!compact && <span class="item"><Icon name="briefcase" />{job.type}</span>}
     </div>
-    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-      <span class="pill">{categoryName(job.category)}</span>
-      {job.featured && <span class="pill amber">Featured</span>}
-      {!job.featured && isNew(job) && <span class="pill amber">New</span>}
-    </div>
+    {!compact && (
+      <div class="tags">
+        <span class="tag">{categoryName(job.category)}</span>
+        {job.featured && <span class="tag green">Featured</span>}
+        {!job.featured && isNew(job) && <span class="tag green">New</span>}
+      </div>
+    )}
   </div>
-  <a class="btn dark" href={`/jobs/${job.slug}`}>View Job</a>
+  <div class="side">
+    <a class="county" href={`/counties/${countySlug(job.county)}`}>{job.county} County</a>
+    <a class="btn btn-ghost-green" href={`/jobs/${job.slug}`}>View Job</a>
+  </div>
 </article>

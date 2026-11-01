@@ -4,11 +4,10 @@ import { countByCounty, countySlug } from "../../lib/jobs.ts";
 const counts = [...countByCounty().entries()];
 ---
 <Base title="School jobs by Michigan county" description="Browse school jobs in all 83 Michigan counties.">
-  <div class="wrap page">
-    <h1>School jobs by county</h1>
-    <p style="color:var(--muted);margin:0 0 24px">All 83 Michigan counties, from Wayne to Keweenaw.</p>
+  <section class="page-hero"><div><h1>Jobs by County</h1><p>All 83 Michigan counties, from Wayne to Keweenaw.</p></div></section>
+  <div class="page"><div class="wrap">
     <div class="grid">
-      {counts.map(([c, n]) => <a class="tile" href={`/counties/${countySlug(c)}`}><strong>{c} County</strong><span>{n} open {n === 1 ? "job" : "jobs"}</span></a>)}
+      {counts.map(([c, n]) => <a class="tile" href={`/counties/${countySlug(c)}`}><span>{c} County</span><small>{n} {n === 1 ? "job" : "jobs"}</small></a>)}
     </div>
-  </div>
+  </div></div>
 </Base>

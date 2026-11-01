@@ -39,9 +39,10 @@ export function categoryName(slug: string): string {
 
 // Pricing concept carried over from the Ohio hub (free tier + paid tiers), plus an agency tier,
 // since staffing agencies and contractors are the most likely paying customers.
+// Features prefixed with "soon:" are not built yet and render as "coming soon".
 export const PLANS = [
-  { id: "free", name: "Free", price: "$0", cadence: "forever", features: ["Your district's jobs listed automatically", "5 direct job posts", "Company profile reused on every post", "Listings live for 60 days"] },
-  { id: "featured", name: "Featured Post", price: "$59", cadence: "per post", features: ["Pinned to the top of search for 30 days", "Highlighted in the weekly newsletter", "Featured badge"] },
-  { id: "district", name: "District Pro", price: "$99", cadence: "per month", features: ["Unlimited direct posts", "3 featured posts per month", "Applicant inbox", "Priority support"] },
-  { id: "agency", name: "Agency", price: "$249", cadence: "per month", features: ["For staffing agencies & contractors", "Unlimited posts across all 83 counties", "Agency badge & profile page", "Searchable candidate resumes"] },
+  { id: "free", name: "Free", price: "$0", cadence: "forever", features: ["Your district's public jobs listed automatically", "Post jobs directly (reviewed within 1 business day)", "Organization details remembered for every post", "Listings stay up while the job is open"] },
+  { id: "featured", name: "Featured Post", price: "$59", cadence: "per post", popular: true, features: ["Pinned to the top of search for 30 days", "Featured badge and highlighted card", "Shown in Featured Jobs on the home page", "soon:Highlighted in the weekly newsletter"] },
+  { id: "district", name: "District Pro", price: "$99", cadence: "per month", features: ["3 featured posts every month", "Priority support", "soon:Employer dashboard & applicant inbox"] },
+  { id: "agency", name: "Agency", price: "$249", cadence: "per month", features: ["For staffing agencies & contractors", "Posts across all 83 counties", "5 featured posts every month", "soon:Agency profile page", "soon:Searchable candidate resumes"] },
 ] as const;

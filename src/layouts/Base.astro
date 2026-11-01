@@ -1,17 +1,22 @@
 ---
 import "../styles.css";
 import { SITE } from "../config/site.ts";
+import Logo from "../components/Logo.astro";
+import Icon from "../components/Icon.astro";
 interface Props { title?: string; description?: string; noindex?: boolean; jsonLd?: object }
 const { title, description = SITE.description, noindex = false, jsonLd } = Astro.props;
-const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
-const path = Astro.url.pathname;
-const canonical = new URL(path, Astro.site).toString();
-const nav = [
+const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} | Michigan schools and great people find each other`;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const seekers = [
   { href: "/jobs", label: "Find Jobs" },
-  { href: "/counties", label: "By County" },
+  { href: "/counties", label: "Jobs by County" },
+  { href: "/categories/teaching", label: "Teaching Jobs" },
+  { href: "/about", label: "About Us" },
+];
+const employers = [
   { href: "/post-a-job", label: "Post a Job" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
+  { href: "/pricing", label: "Plans & Pricing" },
+  { href: "/contact", label: "Contact" },
 ];
 ---
 <!doctype html>
@@ -27,34 +32,51 @@ const nav = [
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#0b2145" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site">
-      <div class="wrap">
-        <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>{SITE.name}</a>
+      <div class="bar">
+        <div style="flex:1"><Logo /></div>
         <nav class="main" aria-label="Main">
-          {nav.map((n) => <a href={n.href} aria-current={path.startsWith(n.href) ? "page" : undefined}>{n.label}</a>)}
+          <details class="menu"><summary>Job Seekers</summary><div class="drop">{seekers.map((l) => <a href={l.href}>{l.label}</a>)}</div></details>
+          <details class="menu"><summary>Employers</summary><div class="drop">{employers.map((l) => <a href={l.href}>{l.label}</a>)}</div></details>
         </nav>
+        <div class="cta">
+          <a class="btn-outline-light" href="/post-a-job">Post a Job</a>
+        </div>
+        <details class="mobile-menu">
+          <summary aria-label="Menu"><Icon name="menu" class="" /></summary>
+          <div class="drop">{[...seekers, ...employers].map((l) => <a href={l.href}>{l.label}</a>)}</div>
+        </details>
       </div>
     </header>
     <main id="main"><slot /></main>
     <footer class="site">
-      <div class="wrap">
-        <div>
-          <strong style="color:#fff">{SITE.name}</strong><br />
-          Free for job seekers. Listings link to each employer's official application.
-        </div>
-        <div>
-          <a href="/contact">Contact</a> · <a href="/pricing">For employers</a> · <a href="/sitemap.xml">Sitemap</a><br />
-          © {new Date().getFullYear()} {SITE.name}
+      <div class="top">
+        <div class="cols">
+          <div>
+            <Logo />
+            <p class="about">Every Michigan school job in one friendly place, updated every morning. Always free for job seekers.</p>
+          </div>
+          <div><h3>Job Seekers</h3><ul><li><a href="/jobs">Search Jobs</a></li><li><a href="/counties">Jobs by County</a></li><li><a href="/about">How it works</a></li></ul></div>
+          <div><h3>Employers</h3><ul><li><a href="/pricing">Plans and Pricing</a></li><li><a href="/post-a-job">Post a Job</a></li></ul></div>
+          <div><h3>Contact Us</h3><ul><li><a href="/about">About Us</a></li><li><a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a></li></ul></div>
         </div>
       </div>
+      <div class="bottom">© {new Date().getFullYear()} {SITE.name} · Listings link to each employer's official application · <a href="/sitemap.xml">Sitemap</a></div>
     </footer>
+    <script>
+      // Close the other dropdown when one opens, and close on outside click.
+      const menus = [...document.querySelectorAll<HTMLDetailsElement>("details.menu, details.mobile-menu")];
+      menus.forEach((m) => m.addEventListener("toggle", () => { if (m.open) menus.forEach((o) => o !== m && (o.open = false)); }));
+      document.addEventListener("click", (e) => menus.forEach((m) => { if (!m.contains(e.target as Node)) m.open = false; }));
+    </script>
   </body>
 </html>
