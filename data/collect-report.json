@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T21:33:25.020Z",
- "total": 2621,
+ "ranAt": "2026-11-01T21:36:49.935Z",
+ "total": 2685,
  "sources": [
   {
    "id": "oakland-schools",
@@ -116,10 +116,30 @@
    "id": "alpena-montmorency-alcona-esd",
    "ok": true,
    "count": 0
+  },
+  {
+   "id": "gratiot-isabella-resd",
+   "ok": true,
+   "count": 27
+  },
+  {
+   "id": "branch-isd",
+   "ok": true,
+   "count": 37
+  },
+  {
+   "id": "livingston-esa",
+   "ok": true,
+   "count": 0
+  },
+  {
+   "id": "jackson-isd",
+   "ok": true,
+   "count": 0
   }
  ],
  "linkCheck": {
-  "checked": 405,
+  "checked": 64,
   "failures": 0,
   "outage": false,
   "removed": 0,
