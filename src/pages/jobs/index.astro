@@ -3,11 +3,11 @@ import Base from "../../layouts/Base.astro";
 import JobCard from "../../components/JobCard.astro";
 import Icon from "../../components/Icon.astro";
 import { COUNTIES, JOB_TYPES } from "../../config/taxonomy.ts";
-import { jobs, allCategories, formatDate } from "../../lib/jobs.ts";
+import { jobs, allCategories, formatDate, cleanTitle, postingFacts } from "../../lib/jobs.ts";
 const countiesWithJobs = COUNTIES.filter((c) => jobs.some((j) => j.county === c));
 // Only the fields the client-side filter needs, to keep the page light.
 const index = jobs.map((j) => ({
-  s: j.slug, t: j.title, e: j.employer, c: j.county, ci: j.city, ty: j.type, ca: j.category,
+  s: j.slug, t: cleanTitle(j.title), sc: postingFacts(j).place, e: j.employer, c: j.county, ci: j.city, ty: j.type, ca: j.category,
   d: j.postedAt.slice(0, 10), p: formatDate(j.postedAt), f: j.featured ? 1 : 0, x: j.excerpt.slice(0, 160).toLowerCase(),
 }));
 const catNames = Object.fromEntries(allCategories.map((c) => [c.slug, c.name]));
@@ -61,7 +61,7 @@ const INITIAL = 30;
   </div>
   <script is:inline id="job-index" type="application/json" set:html={JSON.stringify({ jobs: index, cats: catNames })} />
   <script>
-    type J = { s: string; t: string; e: string; c: string; ci: string; ty: string; ca: string; d: string; p: string; f: number; x: string };
+    type J = { s: string; t: string; e: string; c: string; ci: string; ty: string; ca: string; d: string; p: string; f: number; x: string; sc: string };
     const { jobs, cats } = JSON.parse(document.getElementById("job-index")!.textContent!) as { jobs: J[]; cats: Record<string, string> };
     const w = window as any;
     const form = document.getElementById("filters") as HTMLFormElement;
@@ -100,7 +100,8 @@ const INITIAL = 30;
     const card = (j: J) => `
       <article class="job${j.f ? " featured" : ""}"><div style="min-width:0">
         <h3 class="title"><a class="stretch" href="/jobs/${j.s}">${esc(j.t)}</a></h3>
-        <div class="meta"><span class="item">${ICON.b}${esc(j.e)}</span><span class="item">${ICON.c}<time datetime="${j.d}T12:00:00" data-rel>${esc(j.p)}</time></span><span class="item">${ICON.w}${esc(j.ty)}</span></div>
+        <p class="employer"><strong>${esc(j.e)}</strong>${j.sc && j.sc.toLowerCase() !== j.e.toLowerCase() ? `<span class="school">${esc(j.sc)}</span>` : ""}</p>
+        <div class="meta"><span class="item">${ICON.c}<time datetime="${j.d}T12:00:00" data-rel>${esc(j.p)}</time></span><span class="item">${ICON.w}${esc(j.ty)}</span></div>
         <div class="tags"><span class="tag">${esc(cats[j.ca] ?? "Other")}</span>${j.f ? '<span class="tag green">Featured</span>' : ""}</div>
       </div><div class="side"><a class="county above" href="/counties/${slug(j.c)}">${esc(j.c)} County</a>
         <button class="save above" type="button" data-save="${j.s}" aria-pressed="false" aria-label="Save ${esc(j.t)}">${ICON.h}</button>
