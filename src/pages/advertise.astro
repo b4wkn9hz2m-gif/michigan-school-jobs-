@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../config/site.ts";
+const mail = (t: string) => `mailto:${SITE.contactEmail}?subject=${encodeURIComponent(t)}`;
+const offers = [
+  { name: "Staffing agency package", price: "$249/month", text: "Post in every county we cover, 5 featured posts a month, and your agency named on listings. Built for staffing agencies and contractors that recruit all year." },
+  { name: "Sponsored spot", price: "From $99/month", text: "Teacher-certification programs, substitute staffing and education degree programs can reach Michigan school job seekers with a sponsored spot beside job listings." },
+  { name: "District recruiting package", price: "$99/month", text: "Three featured posts a month plus priority support, for districts that hire all year." },
+];
+---
+<Base title="Advertise" description="Reach Michigan school job seekers: agency packages, sponsored spots and district recruiting.">
+  <section class="page-hero"><div><h1>Reach Michigan school job seekers</h1><p>Every day, people search here for teaching and school support jobs across Michigan.</p></div></section>
+  <div class="page"><div class="wrap" style="max-width:860px">
+    <div class="plans">
+      {offers.map((o) => (
+        <div class="plan"><span class="name">{o.name}</span><span class="price">{o.price}</span><p>{o.text}</p>
+          <a class="btn btn-green" href={mail(`${o.name}: ${SITE.name}`)}>Ask about this</a></div>
+      ))}
+    </div>
+    <p style="text-align:center;color:var(--muted);margin-top:28px">Email <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>. We reply within one business day.</p>
+  </div></div>
+</Base>
