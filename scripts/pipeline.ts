@@ -135,7 +135,7 @@ export function normalize(raw: RawPosting, source: Source, now: Date): Job | nul
   };
 }
 
-export type FeaturedRule = { jobId?: string; applyUrl?: string; employer?: string; titleContains?: string; until: string; note?: string };
+export type FeaturedRule = { ref?: string; customer?: string; jobId?: string; applyUrl?: string; employer?: string; titleContains?: string; until: string; note?: string };
 
 /** Mark jobs that match an active paid placement. Unmatched or expired rules have no effect. */
 export function applyFeatured(jobs: Job[], rules: FeaturedRule[], now: Date): Job[] {
