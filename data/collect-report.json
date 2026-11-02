@@ -1,16 +1,16 @@
 {
- "ranAt": "2026-11-02T02:20:38.305Z",
- "total": 3001,
+ "ranAt": "2026-11-02T19:28:53.533Z",
+ "total": 2985,
  "sources": [
   {
    "id": "oakland-schools",
    "ok": true,
-   "count": 905
+   "count": 900
   },
   {
    "id": "wayne-resa",
    "ok": true,
-   "count": 700
+   "count": 702
   },
   {
    "id": "washtenaw-isd",
@@ -45,7 +45,7 @@
   {
    "id": "eup-consortium",
    "ok": true,
-   "count": 65
+   "count": 63
   },
   {
    "id": "rockford-public-schools",
@@ -85,7 +85,7 @@
   {
    "id": "allegan-consortium",
    "ok": true,
-   "count": 8
+   "count": 9
   },
   {
    "id": "charlevoix-emmet-isd",
@@ -145,7 +145,7 @@
   {
    "id": "clare-gladwin-resd",
    "ok": true,
-   "count": 14
+   "count": 13
   },
   {
    "id": "holland-public-schools",
@@ -155,12 +155,12 @@
   {
    "id": "west-ottawa-public-schools",
    "ok": true,
-   "count": 47
+   "count": 46
   },
   {
    "id": "romeo-community-schools",
    "ok": true,
-   "count": 56
+   "count": 49
   },
   {
    "id": "newaygo-resa",
@@ -180,7 +180,7 @@
   {
    "id": "battle-creek-public-schools",
    "ok": true,
-   "count": 50
+   "count": 46
   },
   {
    "id": "jenison-public-schools",
@@ -200,7 +200,7 @@
   {
    "id": "kingsley-area-schools",
    "ok": true,
-   "count": 1
+   "count": 3
   },
   {
    "id": "coopersville-area-public-schools",
@@ -210,7 +210,7 @@
   {
    "id": "troy-school-district",
    "ok": true,
-   "count": 43
+   "count": 42
   },
   {
    "id": "spring-lake-public-schools",
@@ -219,7 +219,7 @@
   }
  ],
  "linkCheck": {
-  "checked": 55,
+  "checked": 24,
   "failures": 0,
   "outage": false,
   "removed": 0,
