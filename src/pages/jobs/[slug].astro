@@ -4,7 +4,7 @@ import JobCard from "../../components/JobCard.astro";
 import Icon from "../../components/Icon.astro";
 import { SITE } from "../../config/site.ts";
 import { categoryName } from "../../config/taxonomy.ts";
-import { jobs, formatDate, countySlug, type Job } from "../../lib/jobs.ts";
+import { jobs, formatDate, countySlug, cleanTitle, postingFacts, type Job } from "../../lib/jobs.ts";
 
 export function getStaticPaths() {
   return jobs.map((job) => ({ params: { slug: job.slug }, props: { job } }));
@@ -12,7 +12,7 @@ export function getStaticPaths() {
 const { job } = Astro.props as { job: Job };
 const SITE_URL = `https://${SITE.domain}`;
 // Many near-identical postings share a title at one employer; the school or building tells them apart.
-const place = (job.excerpt.match(/Location:\s*([^.]+)\./)?.[1] ?? "").trim();
+const { place, positionType } = postingFacts(job);
 const where = !place ? job.employer : place.toLowerCase().includes(job.employer.toLowerCase()) ? place : place.toLowerCase() === job.employer.toLowerCase() ? job.employer : `${place}, ${job.employer}`;
 const related = jobs.filter((j) => j.id !== job.id && j.county === job.county && j.category === job.category).slice(0, 4);
 const jsonLd = {
@@ -31,11 +31,11 @@ const jsonLd = {
   sameAs: job.applyUrl,
 };
 ---
-<Base title={`${job.title} — ${where}`} description={`${job.title} at ${job.employer} in ${job.county} County, ${SITE.state}. ${job.type}. Apply on the employer's official site.`} jsonLd={jsonLd}>
+<Base title={`${cleanTitle(job.title)} — ${where}`} description={`${job.title} at ${job.employer} in ${job.county} County, ${SITE.state}. ${job.type}. Apply on the employer's official site.`} jsonLd={jsonLd}>
   <section class="page-hero"><div>
     <a class="back-link" href="/jobs" id="back"><Icon name="back" />Back to results</a>
     <div class="crumbs"><a href="/jobs">Positions</a> › <a href={`/counties/${countySlug(job.county)}`}>{job.county} County</a> › <a href={`/categories/${job.category}`}>{categoryName(job.category)}</a></div>
-    <h1 style="font-size:clamp(28px,4vw,44px)">{job.title}</h1>
+    <h1 style="font-size:clamp(28px,4vw,44px)">{cleanTitle(job.title)}</h1>
     <p>{job.employer}</p>
   </div></section>
   <div class="page">
@@ -52,7 +52,13 @@ const jsonLd = {
           <button class="btn btn-soft" type="button" id="share"><Icon name="share" />Share</button>
         </div>
         <div class="prose" style="margin-top:24px;border-top:1px solid var(--line);padding-top:20px">
-          {job.excerpt ? <p>{job.excerpt}</p> : null}
+          {(place || positionType) ? (
+            <dl class="facts-list">
+              {positionType && <><dt>Position type</dt><dd>{positionType}</dd></>}
+              {place && <><dt>School / location</dt><dd>{place}</dd></>}
+              <dt>Employer</dt><dd>{job.employer}</dd>
+            </dl>
+          ) : (job.excerpt ? <p>{job.excerpt}</p> : null)}
           <p>Full details, requirements and salary are on the employer's official posting.</p>
         </div>
       </div>
