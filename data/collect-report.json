@@ -1,6 +1,6 @@
 {
- "ranAt": "2026-11-01T23:47:46.499Z",
- "total": 2946,
+ "ranAt": "2026-11-02T02:20:38.305Z",
+ "total": 3001,
  "sources": [
   {
    "id": "oakland-schools",
@@ -206,10 +206,20 @@
    "id": "coopersville-area-public-schools",
    "ok": true,
    "count": 8
+  },
+  {
+   "id": "troy-school-district",
+   "ok": true,
+   "count": 43
+  },
+  {
+   "id": "spring-lake-public-schools",
+   "ok": true,
+   "count": 12
   }
  ],
  "linkCheck": {
-  "checked": 0,
+  "checked": 55,
   "failures": 0,
   "outage": false,
   "removed": 0,
