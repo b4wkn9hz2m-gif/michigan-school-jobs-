@@ -39,3 +39,23 @@ export function formatDate(iso: string) {
 export function isNew(job: Job) {
   return now - Date.parse(job.postedAt) < 7 * 86_400_000;
 }
+
+// Display-only cleanup of titles: districts add internal codes ("26-ATH-18 ...; NFHS") and some post in ALL CAPS.
+const SMALL = new Set(["a", "an", "and", "at", "for", "in", "of", "on", "or", "the", "to", "with"]);
+export function cleanTitle(raw: string): string {
+  let t = raw.trim().replace(/^\d{2}-[A-Z]{2,6}-\d+\s*[-:]?\s*/, "").replace(/\s*;\s*[A-Z0-9 ]{2,8}$/, "").replace(/\s{2,}/g, " ");
+  const letters = t.replace(/[^A-Za-z]/g, "");
+  if (letters.length > 6 && letters === letters.toUpperCase()) {
+    t = t.toLowerCase().replace(/\b[a-z][a-z'’]*/g, (w, i) => (i > 0 && SMALL.has(w) ? w : w[0].toUpperCase() + w.slice(1)));
+  }
+  return t || raw;
+}
+
+// The posting's excerpt looks like "Position type: X. Location: Y." — pull the pieces out so pages can show them clearly.
+export function postingFacts(job: Job): { place: string; positionType: string } {
+  const e = job.excerpt || "";
+  return {
+    place: (e.match(/Location:\s*([^.]+)\./)?.[1] ?? "").trim(),
+    positionType: (e.match(/Position type:\s*([^.]+)\./)?.[1] ?? "").trim(),
+  };
+}
