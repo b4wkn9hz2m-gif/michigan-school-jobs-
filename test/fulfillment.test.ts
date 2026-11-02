@@ -1,0 +1,75 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createHmac } from "node:crypto";
+import { verifyStripe, planPlacement, handleEvent } from "../fulfillment/worker.mjs";
+
+const jobs = [
+  { slug: "art-teacher-x", title: "Art Teacher", employer: "Oakland Schools", applyUrl: "https://a.test/1?x=1" },
+  { slug: "bus-driver-y", title: "Bus Driver", employer: "Oakland Schools", applyUrl: "https://a.test/2" },
+  { slug: "bus-driver-z", title: "Bus Driver", employer: "Wayne RESA", applyUrl: "https://a.test/3" },
+];
+
+test("signature accepts real, rejects forged and stale", async () => {
+  const body = '{"a":1}', t = Math.floor(Date.now() / 1000);
+  const v1 = createHmac("sha256", "whsec").update(`${t}.${body}`).digest("hex");
+  assert.equal(await verifyStripe(body, `t=${t},v1=${v1}`, "whsec"), true);
+  assert.equal(await verifyStripe(body, `t=${t},v1=${"0".repeat(64)}`, "whsec"), false);
+  assert.equal(await verifyStripe(body, `t=${t - 1000},v1=${v1}`, "whsec"), false);
+  assert.equal(await verifyStripe(body, undefined, "whsec"), false);
+});
+
+test("job matching: site link, title, ambiguity, miss", () => {
+  assert.deepEqual(planPlacement({ kind: "job", text: "https://www.michigan-school-jobs.com/jobs/art-teacher-x", jobs }).rule, { applyUrl: "https://a.test/1?x=1" });
+  assert.deepEqual(planPlacement({ kind: "job", text: "art teacher", jobs }).rule, { applyUrl: "https://a.test/1?x=1" });
+  assert.ok(planPlacement({ kind: "job", text: "bus driver", jobs }).error);
+  assert.ok(planPlacement({ kind: "job", text: "astronaut", jobs }).error);
+  assert.ok(planPlacement({ kind: "job", text: "", jobs }).error);
+});
+
+test("employer matching is exact-ish and refuses guesses", () => {
+  assert.deepEqual(planPlacement({ kind: "employer", text: "oakland schools", jobs }).rule, { employer: "Oakland Schools" });
+  assert.ok(planPlacement({ kind: "employer", text: "Nowhere", jobs }).error);
+});
+
+function fakeEnv(featured: any[], jobList = jobs) {
+  const calls: any[] = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (async (url: string, init: any = {}) => {
+    calls.push({ url: String(url), method: init.method || "GET", body: init.body });
+    if (String(url).endsWith("data/jobs.json")) return new Response(JSON.stringify(jobList));
+    if (String(url).endsWith("data/featured.json") && !init.method) return Response.json({ sha: "s", encoding: "base64", content: btoa(JSON.stringify(featured)) });
+    if (init.method === "PUT") { featured = JSON.parse(atob(JSON.parse(init.body).content.replace(/\n/g, ""))); return new Response("{}"); }
+    return new Response("{}");
+  }) as any;
+  return { env: { GITHUB_TOKEN: "t" }, calls, get featured() { return featured; }, restore: () => (globalThis.fetch = realFetch) };
+}
+
+test("paid featured post adds one rule, retry does not duplicate, sends alert", async () => {
+  const f = fakeEnv([]);
+  const ev = { type: "checkout.session.completed", data: { object: { id: "cs_1", mode: "payment", payment_status: "paid", amount_total: 5900, customer_details: { email: "hr@x.org" }, custom_fields: [{ key: "linkortitleofthejobtofeature", text: { value: "art teacher" } }] } } };
+  const now = Date.parse("2026-11-01");
+  assert.equal(await handleEvent(ev, f.env, now), "placed");
+  assert.equal(f.featured.length, 1);
+  assert.equal(f.featured[0].until, "2026-12-01T00:00:00.000Z");
+  assert.equal(await handleEvent(ev, f.env, now), "duplicate");
+  assert.equal(f.featured.length, 1);
+  assert.ok(f.calls.some((c) => c.url.endsWith("/issues")));
+  f.restore();
+});
+
+test("unmatched payment raises a needs-a-human alert and changes nothing", async () => {
+  const f = fakeEnv([]);
+  const ev = { type: "checkout.session.completed", data: { object: { id: "cs_2", mode: "payment", payment_status: "paid", amount_total: 5900, custom_fields: [{ key: "job", text: { value: "astronaut" } }] } } };
+  assert.equal(await handleEvent(ev, f.env), "alerted");
+  assert.equal(f.featured.length, 0);
+  f.restore();
+});
+
+test("subscription renewal extends the same plan", async () => {
+  const f = fakeEnv([{ employer: "Wayne RESA", until: "2026-12-06T00:00:00.000Z", customer: "cus_1", ref: "cs_9" }]);
+  const end = Math.floor(Date.parse("2027-01-05") / 1000);
+  const ev = { type: "invoice.paid", data: { object: { id: "in_1", customer: "cus_1", billing_reason: "subscription_cycle", lines: { data: [{ period: { end } }] } } } };
+  assert.equal(await handleEvent(ev, f.env), "renewed");
+  assert.equal(f.featured[0].until, "2027-01-08T00:00:00.000Z");
+  f.restore();
+});
