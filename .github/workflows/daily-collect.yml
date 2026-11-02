@@ -40,3 +40,7 @@ jobs:
           git add data/jobs.json data/collect-report.json
           git diff --cached --quiet || git commit -m "Update listings $(date -u +%F)"
           git push
+      - name: Tell Bing about new pages
+        run: |
+          sleep 180
+          node scripts/indexnow.mjs || true
