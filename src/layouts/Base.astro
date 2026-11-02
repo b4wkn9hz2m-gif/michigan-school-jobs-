@@ -46,6 +46,13 @@ const employers = [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {Astro.url.pathname === "/" && <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "Organization", "@id": new URL("/#org", Astro.site).toString(), name: SITE.name, url: new URL("/", Astro.site).toString(), logo: new URL("/apple-touch-icon.png", Astro.site).toString(), email: "hello@michigan-school-jobs.com", areaServed: { "@type": "State", name: "Michigan" } },
+        { "@type": "WebSite", "@id": new URL("/#site", Astro.site).toString(), name: SITE.name, url: new URL("/", Astro.site).toString(), description: SITE.description, publisher: { "@id": new URL("/#org", Astro.site).toString() } }
+      ]
+    })} />}
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
