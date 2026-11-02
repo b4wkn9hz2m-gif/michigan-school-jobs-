@@ -268,3 +268,11 @@ footer.site .bottom { background: #fff; text-align: center; font-size: 12px; pad
 
 /* Make the hidden attribute win over component display rules (e.g. the empty-state "Show more" button). */
 [hidden] { display: none !important; }
+
+.job .employer{margin:4px 0 6px;font-size:15px;color:var(--ink,#0b2145)}
+.job .employer strong{font-weight:600}
+.job .employer .school{display:block;color:#5b6b82;font-weight:500}
+.job .title{text-transform:none}
+.facts-list{display:grid;grid-template-columns:max-content 1fr;gap:10px 20px;margin:0 0 16px;padding:16px 18px;background:#f4f7fb;border-radius:12px}
+.facts-list dt{font-weight:600;color:#5b6b82}
+.facts-list dd{margin:0;font-weight:500}
