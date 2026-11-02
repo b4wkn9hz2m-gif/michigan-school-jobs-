@@ -1,16 +1,19 @@
 ---
 import type { Job } from "../lib/jobs.ts";
-import { formatDate, isNew, countySlug } from "../lib/jobs.ts";
+import { formatDate, isNew, countySlug, cleanTitle, postingFacts } from "../lib/jobs.ts";
 import { categoryName } from "../config/taxonomy.ts";
 import Icon from "./Icon.astro";
 interface Props { job: Job; compact?: boolean }
 const { job, compact = false } = Astro.props;
+const title = cleanTitle(job.title);
+const { place } = postingFacts(job);
+const showPlace = place && place.toLowerCase() !== job.employer.toLowerCase() ? place : "";
 ---
 <article class:list={["job", { featured: job.featured }]}>
   <div style="min-width:0">
-    <h3 class="title"><a class="stretch" href={`/jobs/${job.slug}`}>{job.title}</a></h3>
+    <h3 class="title"><a class="stretch" href={`/jobs/${job.slug}`}>{title}</a></h3>
+    <p class="employer"><strong>{job.employer}</strong>{showPlace && <span class="school">{showPlace}</span>}</p>
     <div class="meta">
-      <span class="item"><Icon name="building" />{job.employer}</span>
       <span class="item"><Icon name="calendar" /><time datetime={job.postedAt} data-rel>{formatDate(job.postedAt)}</time></span>
       {!compact && <span class="item"><Icon name="briefcase" />{job.type}</span>}
     </div>
@@ -24,7 +27,7 @@ const { job, compact = false } = Astro.props;
   </div>
   <div class="side">
     <a class="county above" href={`/counties/${countySlug(job.county)}`}>{job.county} County</a>
-    <button class="save above" type="button" data-save={job.slug} aria-pressed="false" aria-label={`Save ${job.title}`}><Icon name="heart" /></button>
+    <button class="save above" type="button" data-save={job.slug} aria-pressed="false" aria-label={`Save ${title}`}><Icon name="heart" /></button>
     <span class="btn btn-ghost-green view" aria-hidden="true">View Job</span>
   </div>
 </article>
