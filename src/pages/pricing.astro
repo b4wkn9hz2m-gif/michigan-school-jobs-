@@ -4,7 +4,7 @@ import { PLANS } from "../config/taxonomy.ts";
 import { SITE } from "../config/site.ts";
 ---
 <Base title="Plans & Pricing" description="List your school's jobs free. Upgrade for featured placement or agency access.">
-  <section class="page-hero"><div><h1>Plans &amp; Pricing</h1><p>Michigan districts and charter schools are listed free. Paid plans add visibility. Job seekers never pay.</p></div></section>
+  <section class="page-hero"><div><h1>Plans &amp; Pricing</h1><p>Jobs from Michigan districts and charter schools are listed free. Add your own postings with a $49/month plan. Job seekers never pay.</p></div></section>
   <div class="page"><div class="wrap">
     <div class="plans">
       {PLANS.map((p) => (
@@ -13,8 +13,8 @@ import { SITE } from "../config/site.ts";
           <span class="name">{p.name}</span>
           <span class="price">{p.price} <span>{p.cadence}</span></span>
           <ul>{p.features.map((f) => f.startsWith("soon:") ? <li class="soon">{f.slice(5)} (coming soon)</li> : <li>{f}</li>)}</ul>
-          <a class:list={["btn", p.id === "free" ? "btn-ghost-green" : "btn-green"]} href={p.id === "free" ? "/post-a-job" : SITE.paymentLinks[p.id] || `mailto:${SITE.contactEmail}?subject=${encodeURIComponent(`${p.name} plan: ${SITE.name}`)}`}>
-            {p.id === "free" ? "Post a job" : "Get started"}
+          <a class:list={["btn", p.id === "free" ? "btn-ghost-green" : "btn-green"]} href={p.id === "free" ? "/about" : SITE.paymentLinks[p.id] || `mailto:${SITE.contactEmail}?subject=${encodeURIComponent(`${p.name} plan: ${SITE.name}`)}`}>
+            {p.id === "free" ? "Learn more" : "Get started"}
           </a>
         </div>
       ))}
