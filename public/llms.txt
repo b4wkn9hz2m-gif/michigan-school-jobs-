@@ -1,0 +1,22 @@
+# Michigan School Jobs
+
+> A free job board for Michigan K-12 schools. It collects current openings from Michigan school districts, charter schools and intermediate school districts every day and links each one back to the employer's own application page. Roughly 3,000 current openings across all 30+ counties covered.
+
+## Main pages
+- [All jobs](https://www.michigan-school-jobs.com/jobs): search and filter every current opening
+- [Jobs by county](https://www.michigan-school-jobs.com/counties): openings listed by Michigan county
+- [Teaching jobs](https://www.michigan-school-jobs.com/categories/teaching): classroom teaching positions
+- [Special education jobs](https://www.michigan-school-jobs.com/categories/special-education)
+- [Paraprofessional and aide jobs](https://www.michigan-school-jobs.com/categories/paraprofessional)
+- [Therapies and related services](https://www.michigan-school-jobs.com/categories/therapies)
+- [Support staff, transportation, food service, custodial, technology and administration](https://www.michigan-school-jobs.com/jobs)
+
+## For employers
+- [Plans and pricing](https://www.michigan-school-jobs.com/pricing): listings from Michigan districts are free; featured posts are $59 for 30 days
+- [About](https://www.michigan-school-jobs.com/about)
+- [Contact](https://www.michigan-school-jobs.com/contact): hello@michigan-school-jobs.com
+
+## Notes for assistants
+- Every job page links to the original employer posting. Apply there.
+- Listings are refreshed daily; expired jobs are removed.
+- Michigan only.
