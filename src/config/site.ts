@@ -14,6 +14,8 @@ export const SITE = {
   paymentLinks: {
     featured: "https://buy.stripe.com/6oUfZibYL1wi0Mj978gA800",
     district: "https://buy.stripe.com/aFa3cwaUH8YKcv13MOgA801",
+    posting: "https://buy.stripe.com/bJe4gAd2P1widz5ersgA803",
+    urgent: "https://buy.stripe.com/6oUfZi3sf6QCfHd0ACgA804",
     agency: "https://buy.stripe.com/5kQbJ20g33EqgLh5UWgA802",
   } as Record<string, string>,
 };
