@@ -1,11 +1,11 @@
 {
- "ranAt": "2026-11-02T19:28:53.533Z",
- "total": 2985,
+ "ranAt": "2026-11-03T17:00:35.516Z",
+ "total": 2979,
  "sources": [
   {
    "id": "oakland-schools",
    "ok": true,
-   "count": 900
+   "count": 896
   },
   {
    "id": "wayne-resa",
@@ -20,7 +20,7 @@
   {
    "id": "mid-michigan-gcaps",
    "ok": true,
-   "count": 216
+   "count": 215
   },
   {
    "id": "montcalm-isd",
@@ -35,7 +35,7 @@
   {
    "id": "monroe-county-consortium",
    "ok": true,
-   "count": 132
+   "count": 131
   },
   {
    "id": "saginaw-consortium",
@@ -50,12 +50,12 @@
   {
    "id": "rockford-public-schools",
    "ok": true,
-   "count": 35
+   "count": 34
   },
   {
    "id": "kentwood-public-schools",
    "ok": true,
-   "count": 11
+   "count": 16
   },
   {
    "id": "manistee-isd",
@@ -140,7 +140,7 @@
   {
    "id": "van-buren-consortium",
    "ok": true,
-   "count": 46
+   "count": 47
   },
   {
    "id": "clare-gladwin-resd",
@@ -160,7 +160,7 @@
   {
    "id": "romeo-community-schools",
    "ok": true,
-   "count": 49
+   "count": 41
   },
   {
    "id": "newaygo-resa",
@@ -180,7 +180,7 @@
   {
    "id": "battle-creek-public-schools",
    "ok": true,
-   "count": 46
+   "count": 48
   },
   {
    "id": "jenison-public-schools",
@@ -205,7 +205,7 @@
   {
    "id": "coopersville-area-public-schools",
    "ok": true,
-   "count": 8
+   "count": 9
   },
   {
    "id": "troy-school-district",
@@ -219,7 +219,7 @@
   }
  ],
  "linkCheck": {
-  "checked": 24,
+  "checked": 39,
   "failures": 0,
   "outage": false,
   "removed": 0,
