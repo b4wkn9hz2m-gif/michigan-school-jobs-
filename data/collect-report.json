@@ -1,31 +1,31 @@
 {
- "ranAt": "2026-11-03T17:00:35.516Z",
- "total": 2979,
+ "ranAt": "2026-11-04T17:13:14.675Z",
+ "total": 2998,
  "sources": [
   {
    "id": "oakland-schools",
    "ok": true,
-   "count": 896
+   "count": 891
   },
   {
    "id": "wayne-resa",
    "ok": true,
-   "count": 702
+   "count": 707
   },
   {
    "id": "washtenaw-isd",
    "ok": true,
-   "count": 326
+   "count": 329
   },
   {
    "id": "mid-michigan-gcaps",
    "ok": true,
-   "count": 215
+   "count": 216
   },
   {
    "id": "montcalm-isd",
    "ok": true,
-   "count": 68
+   "count": 67
   },
   {
    "id": "ionia-isd",
@@ -35,17 +35,17 @@
   {
    "id": "monroe-county-consortium",
    "ok": true,
-   "count": 131
+   "count": 132
   },
   {
    "id": "saginaw-consortium",
    "ok": true,
-   "count": 91
+   "count": 93
   },
   {
    "id": "eup-consortium",
    "ok": true,
-   "count": 63
+   "count": 65
   },
   {
    "id": "rockford-public-schools",
@@ -55,7 +55,7 @@
   {
    "id": "kentwood-public-schools",
    "ok": true,
-   "count": 16
+   "count": 25
   },
   {
    "id": "manistee-isd",
@@ -125,7 +125,7 @@
   {
    "id": "branch-isd",
    "ok": true,
-   "count": 37
+   "count": 36
   },
   {
    "id": "livingston-esa",
@@ -140,7 +140,7 @@
   {
    "id": "van-buren-consortium",
    "ok": true,
-   "count": 47
+   "count": 46
   },
   {
    "id": "clare-gladwin-resd",
@@ -150,12 +150,12 @@
   {
    "id": "holland-public-schools",
    "ok": true,
-   "count": 12
+   "count": 14
   },
   {
    "id": "west-ottawa-public-schools",
    "ok": true,
-   "count": 46
+   "count": 47
   },
   {
    "id": "romeo-community-schools",
@@ -180,7 +180,7 @@
   {
    "id": "battle-creek-public-schools",
    "ok": true,
-   "count": 48
+   "count": 49
   },
   {
    "id": "jenison-public-schools",
@@ -190,7 +190,7 @@
   {
    "id": "reese-public-schools",
    "ok": true,
-   "count": 9
+   "count": 8
   },
   {
    "id": "vassar-public-schools",
@@ -215,11 +215,11 @@
   {
    "id": "spring-lake-public-schools",
    "ok": true,
-   "count": 12
+   "count": 13
   }
  ],
  "linkCheck": {
-  "checked": 39,
+  "checked": 42,
   "failures": 0,
   "outage": false,
   "removed": 0,
