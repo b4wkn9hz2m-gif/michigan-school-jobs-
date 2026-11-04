@@ -73,3 +73,19 @@ test("subscription renewal extends the same plan", async () => {
   assert.equal(f.featured[0].until, "2027-01-08T00:00:00.000Z");
   f.restore();
 });
+
+test("buyer emails and names never reach the repo or GitHub issues", async () => {
+  const f = fakeEnv([]);
+  const pii = { email: "jane.doe@school.org", name: "Jane Doe" };
+  const ok = { type: "checkout.session.completed", data: { object: { id: "cs_p1", mode: "payment", payment_status: "paid", amount_total: 5900, customer_email: pii.email, customer_details: pii, custom_fields: [{ key: "job", text: { value: "art teacher" } }] } } };
+  const bad = { type: "checkout.session.completed", data: { object: { id: "cs_p2", mode: "payment", payment_status: "paid", amount_total: 5900, customer_email: pii.email, customer_details: pii, custom_fields: [{ key: "job", text: { value: "astronaut" } }] } } };
+  await handleEvent(ok, f.env, Date.parse("2026-11-01"));
+  await handleEvent(bad, f.env, Date.parse("2026-11-01"));
+  const written = JSON.stringify(f.featured) + f.calls.map((c) => {
+    const body = (c as any).body ?? "";
+    try { const j = JSON.parse(body); return JSON.stringify(j) + (j.content ? atob(j.content.replace(/\n/g, "")) : ""); } catch { return String(body); }
+  }).join("");
+  assert.ok(!written.includes(pii.email), "email leaked");
+  assert.ok(!written.includes(pii.name), "name leaked");
+  f.restore();
+});

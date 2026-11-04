@@ -1,6 +1,8 @@
 // Fulfillment worker: Stripe webhook -> data/featured.json (GitHub) -> site redeploys itself.
 // Secrets (set in Cloudflare, never in code): STRIPE_WEBHOOK_SECRET, GITHUB_TOKEN.
 // Alerts: every sale and every problem opens a GitHub issue, which GitHub emails to the repo owner.
+// Privacy: buyers' names and emails are NEVER written to the repo or to issues (the repo may be
+// public). Alerts carry only the amount and Stripe IDs; buyer details stay in Stripe.
 const REPO = "b4wkn9hz2m-gif/michigan-school-jobs-";
 const DAY = 86_400_000;
 export const FEATURED_DAYS = 30;
@@ -99,24 +101,23 @@ export async function handleEvent(event, env, now = Date.now()) {
 
   if (event.type === "checkout.session.completed") {
     if (obj.payment_status && obj.payment_status !== "paid") return "not paid yet";
-    const email = obj.customer_details?.email || obj.customer_email || "unknown";
     const amount = `$${((obj.amount_total || 0) / 100).toFixed(2)}`;
     const isSub = obj.mode === "subscription";
     const text = answer(obj, "employer", "district", "organization", "job", "link");
     const jobs = await readJobs(env);
     const plan = planPlacement({ kind: isSub ? "employer" : "job", text, jobs });
     if (plan.error) {
-      await alert(env, `Needs a human: ${amount} from ${email}`, `A payment came in but I could not place it automatically.\n\nReason: ${plan.error}\nBuyer wrote: "${text}"\nSession: ${obj.id}\nCustomer: ${obj.customer || "-"}\n\nFix: add a rule to data/featured.json (see data/FEATURED.md) and email the buyer.`);
+      await alert(env, `Needs a human: ${amount} payment`, `A payment came in but I could not place it automatically.\n\nReason: ${plan.error}\nBuyer wrote: "${text}"\nStripe session: ${obj.id}\nStripe customer: ${obj.customer || "-"}\n\nThe buyer's contact details are in Stripe (Payments → search for the session ID).\nFix: add a rule to data/featured.json (see data/FEATURED.md) and email the buyer.`);
       return "alerted";
     }
     const until = iso(now + (isSub ? 35 : FEATURED_DAYS) * DAY);
-    const rule = { note: `${isSub ? "Plan" : "Featured post"} - ${amount} from ${email} (${obj.id})`, ...plan.rule, until, ref: obj.id, ...(obj.customer && isSub ? { customer: obj.customer } : {}) };
+    const rule = { note: `${isSub ? "Plan" : "Featured post"} - ${amount} (${obj.id})`, ...plan.rule, until, ref: obj.id, ...(obj.customer && isSub ? { customer: obj.customer } : {}) };
     const changed = await editRules(env, (rules) => {
       if (rules.some((r) => r.ref === obj.id)) return null; // Stripe retried; already done
       const keep = rules.filter((r) => Date.parse(r.until) > now - 30 * DAY);
       return [...keep, rule];
     }, `Fulfil ${isSub ? "plan" : "featured post"} ${obj.id}`);
-    if (changed) await alert(env, `Sale: ${amount} from ${email}`, `Placed automatically.\n\n\`\`\`json\n${JSON.stringify(rule, null, 2)}\n\`\`\`\nIt goes live within a couple of minutes.`);
+    if (changed) await alert(env, `Sale: ${amount}`, `Placed automatically.\n\n\`\`\`json\n${JSON.stringify(rule, null, 2)}\n\`\`\`\nIt goes live within a couple of minutes.`);
     return changed ? "placed" : "duplicate";
   }
 
