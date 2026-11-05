@@ -276,3 +276,5 @@ footer.site .bottom { background: #fff; text-align: center; font-size: 12px; pad
 .facts-list{display:grid;grid-template-columns:max-content 1fr;gap:10px 20px;margin:0 0 16px;padding:16px 18px;background:#f4f7fb;border-radius:12px}
 .facts-list dt{font-weight:600;color:#5b6b82}
 .facts-list dd{margin:0;font-weight:500}
+
+.tag.urgent { background: #fdecc8; color: #8a4b00; }

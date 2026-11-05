@@ -46,6 +46,8 @@ export type Job = {
   excerpt: string;
   sourceId: string;
   featured: boolean;
+  // "Hiring now" badge (paid Urgent Badge).
+  urgent?: boolean;
   // When the apply link was last opened and confirmed to show this job on the employer's site.
   verifiedAt?: string;
 };
@@ -81,6 +83,8 @@ export function stripHtml(html = ""): string {
   return html
     .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
     .replace(/<[^>]+>/g, " ")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
     .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"')
     .replace(/\s+/g, " ")
     .trim();
@@ -135,7 +139,8 @@ export function normalize(raw: RawPosting, source: Source, now: Date): Job | nul
   };
 }
 
-export type FeaturedRule = { ref?: string; customer?: string; jobId?: string; applyUrl?: string; employer?: string; titleContains?: string; until: string; note?: string };
+// badge "urgent" = "Hiring now" badge only (not pinned). plan "posting" = Posting Plan subscriber record (matches no jobs).
+export type FeaturedRule = { badge?: "urgent"; plan?: string; ref?: string; customer?: string; jobId?: string; applyUrl?: string; employer?: string; titleContains?: string; until: string; note?: string };
 
 /** Mark jobs that match an active paid placement. Unmatched or expired rules have no effect. */
 export function applyFeatured(jobs: Job[], rules: FeaturedRule[], now: Date): Job[] {
@@ -149,7 +154,11 @@ export function applyFeatured(jobs: Job[], rules: FeaturedRule[], now: Date): Jo
     return true;
   };
   return jobs
-    .map((j) => ({ ...j, featured: active.some((r) => matches(j, r)) }))
+    .map((j) => ({
+      ...j,
+      featured: active.some((r) => r.badge !== "urgent" && matches(j, r)),
+      urgent: active.some((r) => r.badge === "urgent" && matches(j, r)),
+    }))
     .sort((a, b) => Number(b.featured) - Number(a.featured) || b.postedAt.localeCompare(a.postedAt));
 }
 

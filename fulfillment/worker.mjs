@@ -4,6 +4,8 @@
 // Privacy: buyers' names and emails are NEVER written to the repo or to issues (the repo may be
 // public). Alerts carry only the amount and Stripe IDs; buyer details stay in Stripe.
 const REPO = "b4wkn9hz2m-gif/michigan-school-jobs-";
+// Shown at GET / so the site health check can confirm which code is deployed.
+export const VERSION = "2026-11-05.2";
 const DAY = 86_400_000;
 export const FEATURED_DAYS = 30;
 export const GRACE_DAYS = 3;
@@ -96,6 +98,15 @@ const answer = (session, ...names) => {
   return f?.text?.value || "";
 };
 
+// What each Stripe price buys (amount in cents). Must match PLANS in src/config/taxonomy.ts.
+export const PRODUCTS = {
+  2900: { name: "Urgent Badge", kind: "job", days: 14, badge: "urgent" },
+  5900: { name: "Featured Post", kind: "job", days: FEATURED_DAYS },
+  4900: { name: "Posting Plan", kind: "posting", days: 35 },
+  9900: { name: "District Pro", kind: "employer", days: 35 },
+  24900: { name: "Agency plan", kind: "employer", days: 35 },
+};
+
 export async function handleEvent(event, env, now = Date.now()) {
   const obj = event.data.object;
 
@@ -103,20 +114,33 @@ export async function handleEvent(event, env, now = Date.now()) {
     if (obj.payment_status && obj.payment_status !== "paid") return "not paid yet";
     const amount = `$${((obj.amount_total || 0) / 100).toFixed(2)}`;
     const isSub = obj.mode === "subscription";
-    const text = answer(obj, "employer", "district", "organization", "job", "link");
+    const product = PRODUCTS[obj.amount_total];
+    const text = answer(obj, "employer", "district", "organization", "agency", "job", "link");
+    if (!product) {
+      await alert(env, `Needs a human: ${amount} payment`, `A payment came in for an amount that doesn't match any plan, so nothing was changed.\n\nBuyer wrote: "${text}"\nStripe session: ${obj.id}\nStripe customer: ${obj.customer || "-"}\n\n(If this was a Stripe "Send test event", this alert means the automation is connected correctly.)`);
+      return "alerted";
+    }
+    if (product.kind === "posting") {
+      // Posting Plan: the subscriber may post their own jobs; nothing gets pinned. Keep a record so
+      // renewals extend it and the daily routine knows their posts are covered.
+      const rule = { note: `Posting Plan - ${amount} (${obj.id})`, plan: "posting", organization: text, until: iso(now + product.days * DAY), ref: obj.id, ...(obj.customer ? { customer: obj.customer } : {}) };
+      const changed = await editRules(env, (rules) => (rules.some((r) => r.ref === obj.id) ? null : [...rules, rule]), `Record Posting Plan ${obj.id}`);
+      if (changed) await alert(env, `Sale: ${amount} Posting Plan`, `New Posting Plan subscriber: "${text}". They can now send unlimited job posts through the Post a Job form; add each one to data/direct-jobs.json (expiry 30 days, renewable while subscribed).`);
+      return changed ? "recorded" : "duplicate";
+    }
     const jobs = await readJobs(env);
-    const plan = planPlacement({ kind: isSub ? "employer" : "job", text, jobs });
+    const plan = planPlacement({ kind: product.kind, text, jobs });
     if (plan.error) {
       await alert(env, `Needs a human: ${amount} payment`, `A payment came in but I could not place it automatically.\n\nReason: ${plan.error}\nBuyer wrote: "${text}"\nStripe session: ${obj.id}\nStripe customer: ${obj.customer || "-"}\n\nThe buyer's contact details are in Stripe (Payments → search for the session ID).\nFix: add a rule to data/featured.json (see data/FEATURED.md) and email the buyer.`);
       return "alerted";
     }
-    const until = iso(now + (isSub ? 35 : FEATURED_DAYS) * DAY);
-    const rule = { note: `${isSub ? "Plan" : "Featured post"} - ${amount} (${obj.id})`, ...plan.rule, until, ref: obj.id, ...(obj.customer && isSub ? { customer: obj.customer } : {}) };
+    const until = iso(now + product.days * DAY);
+    const rule = { note: `${product.name} - ${amount} (${obj.id})`, ...plan.rule, ...(product.badge ? { badge: product.badge } : {}), until, ref: obj.id, ...(obj.customer && isSub ? { customer: obj.customer } : {}) };
     const changed = await editRules(env, (rules) => {
       if (rules.some((r) => r.ref === obj.id)) return null; // Stripe retried; already done
       const keep = rules.filter((r) => Date.parse(r.until) > now - 30 * DAY);
       return [...keep, rule];
-    }, `Fulfil ${isSub ? "plan" : "featured post"} ${obj.id}`);
+    }, `Fulfil ${product.name} ${obj.id}`);
     if (changed) await alert(env, `Sale: ${amount}`, `Placed automatically.\n\n\`\`\`json\n${JSON.stringify(rule, null, 2)}\n\`\`\`\nIt goes live within a couple of minutes.`);
     return changed ? "placed" : "duplicate";
   }
@@ -141,7 +165,7 @@ export async function handleEvent(event, env, now = Date.now()) {
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
-    if (url.pathname !== "/stripe-webhook" || req.method !== "POST") return new Response("ok", { status: 200 });
+    if (url.pathname !== "/stripe-webhook" || req.method !== "POST") return new Response(`ok ${VERSION}`, { status: 200 });
     const body = await req.text();
     if (!(await verifyStripe(body, req.headers.get("stripe-signature"), env.STRIPE_WEBHOOK_SECRET))) return new Response("bad signature", { status: 400 });
     try {

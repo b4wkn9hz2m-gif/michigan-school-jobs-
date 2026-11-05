@@ -89,3 +89,40 @@ test("buyer emails and names never reach the repo or GitHub issues", async () =>
   assert.ok(!written.includes(pii.name), "name leaked");
   f.restore();
 });
+
+const paid = (id: string, cents: number, mode: string, text: string, customer?: string) => ({ type: "checkout.session.completed", data: { object: { id, mode, payment_status: "paid", amount_total: cents, customer, custom_fields: [{ key: "linkortitleofthejobtofeature", text: { value: text } }] } } });
+
+test("each plan does what the pricing page promises", async () => {
+  const now = Date.parse("2026-11-01");
+  const f = fakeEnv([]);
+  assert.equal(await handleEvent(paid("cs_u", 2900, "payment", "art teacher"), f.env, now), "placed");
+  const urgent = f.featured.find((r: any) => r.ref === "cs_u");
+  assert.equal(urgent.badge, "urgent");
+  assert.equal(urgent.until, "2026-11-15T00:00:00.000Z"); // 14 days
+  assert.equal(await handleEvent(paid("cs_f", 5900, "payment", "art teacher"), f.env, now), "placed");
+  const feat = f.featured.find((r: any) => r.ref === "cs_f");
+  assert.equal(feat.badge, undefined);
+  assert.equal(feat.until, "2026-12-01T00:00:00.000Z"); // 30 days
+  // Posting Plan: recorded, nothing pinned
+  assert.equal(await handleEvent(paid("cs_p", 4900, "subscription", "Oakland Schools", "cus_p"), f.env, now), "recorded");
+  const post = f.featured.find((r: any) => r.ref === "cs_p");
+  assert.equal(post.plan, "posting");
+  assert.equal(post.employer, undefined);
+  assert.equal(post.applyUrl, undefined);
+  // District Pro: features the district's jobs
+  assert.equal(await handleEvent(paid("cs_d", 9900, "subscription", "Oakland Schools", "cus_d"), f.env, now), "placed");
+  assert.equal(f.featured.find((r: any) => r.ref === "cs_d").employer, "Oakland Schools");
+  // Unknown amount (e.g. Stripe's "Send test event"): alert, change nothing
+  const before = f.featured.length;
+  assert.equal(await handleEvent(paid("cs_t", 2000, "payment", "art teacher"), f.env, now), "alerted");
+  assert.equal(f.featured.length, before);
+  f.restore();
+});
+
+test("posting plan renewals extend the subscriber record", async () => {
+  const f = fakeEnv([{ plan: "posting", until: "2026-12-06T00:00:00.000Z", customer: "cus_p", ref: "cs_p" }]);
+  const end = Math.floor(Date.parse("2027-01-05") / 1000);
+  const ev = { type: "invoice.paid", data: { object: { id: "in_2", customer: "cus_p", billing_reason: "subscription_cycle", lines: { data: [{ period: { end } }] } } } };
+  assert.equal(await handleEvent(ev, f.env), "renewed");
+  f.restore();
+});

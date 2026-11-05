@@ -21,6 +21,7 @@ const showPlace = place && place.toLowerCase() !== job.employer.toLowerCase() ? 
       <div class="tags">
         <span class="tag">{categoryName(job.category)}</span>
         {job.sourceId === "direct" && <span class="tag green">Posted by employer</span>}
+        {job.urgent && <span class="tag urgent">Hiring now</span>}
         {job.featured && <span class="tag green">Featured</span>}
         {!job.featured && isNew(job) && <span class="tag green">New</span>}
       </div>

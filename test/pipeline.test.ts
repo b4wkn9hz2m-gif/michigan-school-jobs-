@@ -182,3 +182,22 @@ test("direct employer posts become listings until their end date", () => {
   assert.equal(job.applyUrl, "https://tally.so/r/x");
   assert.equal(directJobs([post], new Date("2026-12-07")).length, 0);
 });
+
+test("urgent rules add a Hiring now badge without pinning; posting-plan records match nothing", () => {
+  const mk = (title: string, d: string) => normalize({ title, employer: "A Schools", applyUrl: `https://x.org/${title}`, postedAt: d }, source, now)!;
+  const jobs = [mk("Teacher", "2026-10-30"), mk("Bus Driver", "2026-10-01")];
+  const out = applyFeatured(jobs, [
+    { applyUrl: "https://x.org/Bus Driver", badge: "urgent", until: "2026-11-15" },
+    { plan: "posting", customer: "cus_1", until: "2026-12-01" },
+  ], now);
+  const bus = out.find((j) => j.title === "Bus Driver")!;
+  assert.equal(bus.urgent, true);
+  assert.equal(bus.featured, false);
+  assert.equal(out[0].title, "Teacher"); // not pinned above newer jobs
+  assert.ok(out.every((j) => !j.featured));
+});
+
+test("numeric HTML entities in titles are decoded", () => {
+  const j = normalize({ title: "Bus Driver &#8211; Route 28 &#x2013; AM", employer: "", applyUrl: "https://x.org/e" }, source, now)!;
+  assert.equal(j.title, "Bus Driver – Route 28 – AM");
+});
