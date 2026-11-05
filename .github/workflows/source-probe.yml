@@ -1,0 +1,27 @@
+name: Probe job boards
+# Diagnostic only: loads AppliTrack boards and reports what each page contains. Changes nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: "Space-separated AppliTrack slugs to inspect"
+        required: true
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect boards
+        env:
+          SLUGS: ${{ github.event.inputs.slugs }}
+        run: |
+          for s in $SLUGS; do
+            for v in "view.asp?all=1&embed=1" "view.asp?embed=1"; do
+              u="https://www.applitrack.com/$s/onlineapp/jobpostings/$v"
+              code=$(curl -sS -L -m 40 -A "MichiganSchoolJobsBot/1.0" -o p.html -w "%{http_code}" "$u" || echo ERR)
+              title=$(grep -o '<title>[^<]*' p.html | head -1 | sed 's/<title>//' | tr -s ' ')
+              h1=$(grep -o 'Open Positions for [^<]*' p.html | head -1)
+              echo "$s | $v | HTTP $code | bytes $(wc -c < p.html) | postingsList $(grep -o "postingsList" p.html | wc -l) | JobID $(grep -o "JobID:" p.html | wc -l) | outside $(grep -o "applyForOutsideDistrict" p.html | wc -l) | noOpenings $(grep -ci "do not have any openings" p.html) | $h1 | $title"
+              grep -o "AppliTrackJobPostingCategory[^>]*>[^<]*" p.html | head -3 | sed 's/^/      category: /'
+              grep -oi "<script[^>]*src=[^>]*Output.asp[^>]*>" p.html | head -2 | sed 's/^/      script: /'
+            done
+          done
