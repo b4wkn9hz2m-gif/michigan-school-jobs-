@@ -27,6 +27,7 @@ const jsonLd = {
   employmentType: { "Full Time": "FULL_TIME", "Part Time": "PART_TIME", Substitute: "PER_DIEM", Temporary: "TEMPORARY", Internship: "INTERN" }[job.type],
   hiringOrganization: { "@type": "Organization", name: job.employer },
   jobLocation: { "@type": "Place", name: `${job.county} County, ${SITE.state}`, address: { "@type": "PostalAddress", addressLocality: job.city || undefined, addressRegion: SITE.stateCode, addressCountry: "US" } },
+  ...(job.salary ? { baseSalary: { "@type": "MonetaryAmount", currency: "USD", value: { "@type": "QuantitativeValue", minValue: job.salary.min, maxValue: job.salary.max, unitText: job.salary.unit } } } : {}),
   url: new URL(`/jobs/${job.slug}`, SITE_URL).href,
   sameAs: job.applyUrl,
 };
@@ -45,6 +46,7 @@ const jsonLd = {
           <div><Icon name="building" /><span>{job.employer}</span></div>
           <div><Icon name="pin" /><span>{job.city ? `${job.city}, ` : ""}{job.county} County, Michigan</span></div>
           <div><Icon name="briefcase" /><span>{job.type} · {categoryName(job.category)}</span></div>
+          {job.salary && <div><Icon name="briefcase" /><span><strong>Pay: {job.salary.text}</strong></span></div>}
           <div><Icon name="calendar" /><span>Posted <time datetime={job.postedAt} data-rel>{formatDate(job.postedAt)}</time>{job.deadline ? ` · Applications close ${formatDate(job.deadline)}` : ""}</span></div>
         </div>
         <div class="job-actions">

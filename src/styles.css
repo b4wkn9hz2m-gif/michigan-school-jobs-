@@ -278,3 +278,4 @@ footer.site .bottom { background: #fff; text-align: center; font-size: 12px; pad
 .facts-list dd{margin:0;font-weight:500}
 
 .tag.urgent { background: #fdecc8; color: #8a4b00; }
+.job .meta .salary { color: var(--green-dark); font-weight: 600; }

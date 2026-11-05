@@ -201,3 +201,21 @@ test("numeric HTML entities in titles are decoded", () => {
   const j = normalize({ title: "Bus Driver &#8211; Route 28 &#x2013; AM", employer: "", applyUrl: "https://x.org/e" }, source, now)!;
   assert.equal(j.title, "Bus Driver – Route 28 – AM");
 });
+
+
+import { cityFor, extractSalary } from "../scripts/enrich.ts";
+
+test("salary extraction is conservative", () => {
+  assert.deepEqual(extractSalary("Salary Range $50,000 – $60,000, depending on experience"), { min: 50000, max: 60000, unit: "YEAR", text: "$50,000–$60,000/year" });
+  assert.equal(extractSalary("Pay rate: $18.50 per hour")?.text, "$18.50/hour");
+  assert.equal(extractSalary("Starting salary $55K")?.text, "$55,000/year");
+  assert.equal(extractSalary("SALARY: $33,602.89 to $37,059.69 Class Z")?.text, "$33,603–$37,060/year");
+  assert.equal(extractSalary("$10K sign-on bonus available"), null);
+  assert.equal(extractSalary("$5,000 annual stipend"), null);
+  assert.equal(extractSalary("Raised $2,000 for the PTA"), null);
+});
+
+test("city only for known employers", () => {
+  assert.equal(cityFor("Ann Arbor Public Schools"), "Ann Arbor");
+  assert.equal(cityFor("Avondale School District"), "");
+});

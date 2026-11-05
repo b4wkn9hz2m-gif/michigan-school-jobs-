@@ -2,6 +2,7 @@ import raw from "../../data/jobs.json";
 import featuredRules from "../../data/featured.json";
 import directPosts from "../../data/direct-jobs.json";
 import { directJobs, type DirectPost } from "../../scripts/direct.ts";
+import { cityFor, extractSalary } from "../../scripts/enrich.ts";
 import { applyFeatured, type FeaturedRule } from "../../scripts/pipeline.ts";
 import type { Job } from "../../scripts/pipeline.ts";
 import { CATEGORIES, COUNTIES, OTHER_CATEGORY, slugify } from "../config/taxonomy.ts";
@@ -16,7 +17,9 @@ const source: Job[] = fixturePath
 
 const now = Date.now();
 const direct = fixturePath ? [] : directJobs(directPosts as DirectPost[], new Date(now));
-export const jobs: Job[] = applyFeatured([...direct, ...source.filter((j) => Date.parse(j.expiresAt) > now)], featuredRules as FeaturedRule[], new Date(now));
+// City from the employer (hand-checked list) and a stated salary range, for job seekers and Google.
+const enrich = (j: Job): Job => ({ ...j, city: j.city || cityFor(j.employer), salary: extractSalary(j.excerpt) });
+export const jobs: Job[] = applyFeatured([...direct, ...source.filter((j) => Date.parse(j.expiresAt) > now)], featuredRules as FeaturedRule[], new Date(now)).map(enrich);
 
 export const countySlug = (c: string) => slugify(c);
 export const allCategories = [...CATEGORIES.map(({ slug, name }) => ({ slug, name })), OTHER_CATEGORY];
@@ -61,4 +64,19 @@ export function postingFacts(job: Job): { place: string; positionType: string } 
     place: (e.match(/Location:\s*([^.]+)\./)?.[1] ?? "").trim(),
     positionType: (e.match(/Position type:\s*([^.]+)\./)?.[1] ?? "").trim(),
   };
+}
+
+/** County × category combinations with enough jobs for their own landing page. */
+export const COMBO_MIN_JOBS = 3;
+export function comboPages(list = jobs) {
+  const out: { county: string; category: { slug: string; name: string }; list: Job[] }[] = [];
+  for (const county of COUNTIES) {
+    const inCounty = list.filter((j) => j.county === county);
+    if (!inCounty.length) continue;
+    for (const category of allCategories) {
+      const l = inCounty.filter((j) => j.category === category.slug);
+      if (l.length >= COMBO_MIN_JOBS) out.push({ county, category, list: l });
+    }
+  }
+  return out;
 }

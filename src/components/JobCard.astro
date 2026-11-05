@@ -16,6 +16,7 @@ const showPlace = place && place.toLowerCase() !== job.employer.toLowerCase() ? 
     <div class="meta">
       <span class="item"><Icon name="calendar" /><time datetime={job.postedAt} data-rel>{formatDate(job.postedAt)}</time></span>
       {!compact && <span class="item"><Icon name="briefcase" />{job.type}</span>}
+      {job.salary && <span class="item salary">{job.salary.text}</span>}
     </div>
     {!compact && (
       <div class="tags">

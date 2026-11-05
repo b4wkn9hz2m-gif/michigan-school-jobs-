@@ -48,6 +48,8 @@ export type Job = {
   featured: boolean;
   // "Hiring now" badge (paid Urgent Badge).
   urgent?: boolean;
+  // Stated pay range, filled in at build time (scripts/enrich.ts).
+  salary?: { min: number; max: number; unit: "HOUR" | "YEAR"; text: string } | null;
   // When the apply link was last opened and confirmed to show this job on the employer's site.
   verifiedAt?: string;
 };
