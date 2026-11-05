@@ -1,16 +1,16 @@
 {
- "ranAt": "2026-11-05T17:23:00.324Z",
- "total": 2988,
+ "ranAt": "2026-11-05T20:03:18.040Z",
+ "total": 3021,
  "sources": [
   {
    "id": "oakland-schools",
    "ok": true,
-   "count": 891
+   "count": 881
   },
   {
    "id": "wayne-resa",
    "ok": true,
-   "count": 698
+   "count": 693
   },
   {
    "id": "washtenaw-isd",
@@ -20,12 +20,12 @@
   {
    "id": "mid-michigan-gcaps",
    "ok": true,
-   "count": 210
+   "count": 211
   },
   {
    "id": "montcalm-isd",
    "ok": true,
-   "count": 68
+   "count": 69
   },
   {
    "id": "ionia-isd",
@@ -40,7 +40,7 @@
   {
    "id": "saginaw-consortium",
    "ok": true,
-   "count": 93
+   "count": 94
   },
   {
    "id": "eup-consortium",
@@ -50,7 +50,7 @@
   {
    "id": "rockford-public-schools",
    "ok": true,
-   "count": 34
+   "count": 31
   },
   {
    "id": "kentwood-public-schools",
@@ -160,7 +160,7 @@
   {
    "id": "romeo-community-schools",
    "ok": true,
-   "count": 41
+   "count": 42
   },
   {
    "id": "newaygo-resa",
@@ -210,16 +210,41 @@
   {
    "id": "troy-school-district",
    "ok": true,
-   "count": 44
+   "count": 49
   },
   {
    "id": "spring-lake-public-schools",
    "ok": true,
    "count": 13
+  },
+  {
+   "id": "brighton-area-schools",
+   "ok": true,
+   "count": 16
+  },
+  {
+   "id": "grand-haven-area-public-schools",
+   "ok": true,
+   "count": 10
+  },
+  {
+   "id": "allendale-public-schools",
+   "ok": true,
+   "count": 11
+  },
+  {
+   "id": "caledonia-public-schools",
+   "ok": true,
+   "count": 5
+  },
+  {
+   "id": "hartland-consolidated-schools",
+   "ok": true,
+   "count": 0
   }
  ],
  "linkCheck": {
-  "checked": 35,
+  "checked": 103,
   "failures": 0,
   "outage": false,
   "removed": 0,
