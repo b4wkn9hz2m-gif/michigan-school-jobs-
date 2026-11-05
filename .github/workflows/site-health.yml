@@ -29,6 +29,9 @@ jobs:
           curl -sS -o /dev/null -m 30 -w "%{http_code}\n" https://michigan-school-jobs.shloimysicker.workers.dev/ || true
           echo "--- bare domain (should redirect to www once the redirect rule is added):"
           curl -sS -o /dev/null -m 30 -w "%{http_code} -> %{redirect_url}\n" https://michigan-school-jobs.com/ || true
+          echo "--- payment automation (hooks.michigan-school-jobs.com):"
+          curl -sS -m 30 -o hook.txt -w "GET  %{http_code}\n" https://hooks.michigan-school-jobs.com/ 2>&1 || true; head -c 80 hook.txt 2>/dev/null; echo
+          curl -sS -m 30 -o hook.txt -w "POST %{http_code} (400 'bad signature' = worker is live and checking Stripe signatures)\n" -X POST -d '{}' https://hooks.michigan-school-jobs.com/stripe-webhook 2>&1 || true; head -c 80 hook.txt 2>/dev/null; echo
           echo "--- main domain:"
           for host in https://www.michigan-school-jobs.com; do
             check "$host/" "Michigan School"
