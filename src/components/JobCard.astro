@@ -20,6 +20,7 @@ const showPlace = place && place.toLowerCase() !== job.employer.toLowerCase() ? 
     {!compact && (
       <div class="tags">
         <span class="tag">{categoryName(job.category)}</span>
+        {job.sourceId === "direct" && <span class="tag green">Posted by employer</span>}
         {job.featured && <span class="tag green">Featured</span>}
         {!job.featured && isNew(job) && <span class="tag green">New</span>}
       </div>

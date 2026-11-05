@@ -170,3 +170,15 @@ test("AppliTrack jobs hosted on a member district's board link to that district'
   assert.equal(raw.employer, "Grosse Pointe Public Schools");
   assert.match(raw.description!, /POSITION DESCRIPTION: The School Psychologist is responsible/);
 });
+
+import { directJobs } from "../scripts/direct.ts";
+
+test("direct employer posts become listings until their end date", () => {
+  const post = { title: "Preschool Director", employer: "Trinity Christian Academy", county: "Oakland", city: "Pontiac", employmentType: "Full Time", applyUrl: "https://tally.so/r/x", postedAt: "2026-11-05T12:00:00-05:00", expiresAt: "2026-12-05T23:59:00-05:00", description: "Lead our preschool program." };
+  const [job] = directJobs([post], new Date("2026-11-06"));
+  assert.equal(job.sourceId, "direct");
+  assert.equal(job.category, "early-childhood");
+  assert.equal(job.county, "Oakland");
+  assert.equal(job.applyUrl, "https://tally.so/r/x");
+  assert.equal(directJobs([post], new Date("2026-12-07")).length, 0);
+});

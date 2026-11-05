@@ -4,7 +4,11 @@ import { existsSync, readFileSync } from "node:fs";
 import type { Job } from "./pipeline.ts";
 
 const fixture = process.env.JOBS_FIXTURE;
-const all: Job[] = JSON.parse(readFileSync(fixture || "data/jobs.json", "utf8"));
+import { directJobs } from "./direct.ts";
+const all: Job[] = [
+  ...JSON.parse(readFileSync(fixture || "data/jobs.json", "utf8")),
+  ...(fixture ? [] : directJobs(JSON.parse(readFileSync("data/direct-jobs.json", "utf8")), new Date())),
+];
 const now = Date.now();
 const jobs = all.filter((j) => Date.parse(j.expiresAt) > now);
 const decode = (s: string) => s.replace(/&amp;/g, "&").replace(/&#38;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'");
