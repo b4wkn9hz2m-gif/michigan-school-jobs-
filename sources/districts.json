@@ -327,5 +327,33 @@
   "county": "Livingston",
   "adapter": "applitrack",
   "url": "https://www.applitrack.com/brightonk12/onlineapp/jobpostings/view.asp?all=1&embed=1"
+ },
+ {
+  "id": "grand-haven-area-public-schools",
+  "employer": "Grand Haven Area Public Schools",
+  "county": "Ottawa",
+  "adapter": "applitrack",
+  "url": "https://www.applitrack.com/ghaps/onlineapp/jobpostings/view.asp?all=1&embed=1"
+ },
+ {
+  "id": "allendale-public-schools",
+  "employer": "Allendale Public Schools",
+  "county": "Ottawa",
+  "adapter": "applitrack",
+  "url": "https://www.applitrack.com/allendale/onlineapp/jobpostings/view.asp?all=1&embed=1"
+ },
+ {
+  "id": "caledonia-public-schools",
+  "employer": "Caledonia Public School District",
+  "county": "Kent",
+  "adapter": "applitrack",
+  "url": "https://www.applitrack.com/caledonia/onlineapp/jobpostings/view.asp?all=1&embed=1"
+ },
+ {
+  "id": "hartland-consolidated-schools",
+  "employer": "Hartland Consolidated Schools",
+  "county": "Livingston",
+  "adapter": "applitrack",
+  "url": "https://www.applitrack.com/hartland/onlineapp/jobpostings/view.asp?all=1&embed=1"
  }
 ]

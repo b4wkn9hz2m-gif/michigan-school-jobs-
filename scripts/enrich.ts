@@ -37,7 +37,8 @@ export const EMPLOYER_CITY: Record<string, string> = {
   "Kingsley Area Schools": "Kingsley", "Ecorse Public Schools": "Ecorse", "Pickford Public Schools": "Pickford", "Boyne City Schools": "Boyne City",
   "Goodrich Area Schools": "Goodrich", "Ashley Community Schools": "Ashley", "Gratiot-Isabella RESD": "Ithaca", "Grand Blanc Community Schools": "Grand Blanc",
   "Kalamazoo RESA": "Kalamazoo", "DeTour Area Schools": "DeTour Village", "Dundee Community Schools": "Dundee", "St. Ignace Area Schools": "St. Ignace",
-  "Alanson Public Schools": "Alanson", "Brighton Area Schools": "Brighton", "Trinity Christian Academy": "Pontiac",
+  "Alanson Public Schools": "Alanson", "Brighton Area Schools": "Brighton", "Grand Haven Area Public Schools": "Grand Haven", "Allendale Public Schools": "Allendale",
+  "Caledonia Public School District": "Caledonia", "Hartland Consolidated Schools": "Hartland", "Hartland School": "Hartland", "Trinity Christian Academy": "Pontiac",
 };
 
 export function cityFor(employer: string): string {
