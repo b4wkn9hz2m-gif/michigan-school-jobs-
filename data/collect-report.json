@@ -1,16 +1,16 @@
 {
- "ranAt": "2026-11-05T20:03:18.040Z",
- "total": 3021,
+ "ranAt": "2026-11-06T16:44:40.168Z",
+ "total": 3025,
  "sources": [
   {
    "id": "oakland-schools",
    "ok": true,
-   "count": 881
+   "count": 879
   },
   {
    "id": "wayne-resa",
    "ok": true,
-   "count": 693
+   "count": 694
   },
   {
    "id": "washtenaw-isd",
@@ -20,7 +20,7 @@
   {
    "id": "mid-michigan-gcaps",
    "ok": true,
-   "count": 211
+   "count": 209
   },
   {
    "id": "montcalm-isd",
@@ -35,7 +35,7 @@
   {
    "id": "monroe-county-consortium",
    "ok": true,
-   "count": 133
+   "count": 134
   },
   {
    "id": "saginaw-consortium",
@@ -50,7 +50,7 @@
   {
    "id": "rockford-public-schools",
    "ok": true,
-   "count": 31
+   "count": 32
   },
   {
    "id": "kentwood-public-schools",
@@ -125,7 +125,7 @@
   {
    "id": "branch-isd",
    "ok": true,
-   "count": 36
+   "count": 35
   },
   {
    "id": "livingston-esa",
@@ -155,7 +155,7 @@
   {
    "id": "west-ottawa-public-schools",
    "ok": true,
-   "count": 47
+   "count": 48
   },
   {
    "id": "romeo-community-schools",
@@ -190,12 +190,12 @@
   {
    "id": "reese-public-schools",
    "ok": true,
-   "count": 8
+   "count": 9
   },
   {
    "id": "vassar-public-schools",
    "ok": true,
-   "count": 4
+   "count": 5
   },
   {
    "id": "kingsley-area-schools",
@@ -215,12 +215,12 @@
   {
    "id": "spring-lake-public-schools",
    "ok": true,
-   "count": 13
+   "count": 14
   },
   {
    "id": "brighton-area-schools",
    "ok": true,
-   "count": 16
+   "count": 18
   },
   {
    "id": "grand-haven-area-public-schools",
@@ -244,7 +244,7 @@
   }
  ],
  "linkCheck": {
-  "checked": 103,
+  "checked": 25,
   "failures": 0,
   "outage": false,
   "removed": 0,
